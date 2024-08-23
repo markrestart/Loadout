@@ -1,7 +1,8 @@
+using Unity.Netcode;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Equipment", menuName = "Equipment", order = 0)]
-public class Equipment : ScriptableObject {
+public class SO_Equipment : ScriptableObject {
     public string equipmentName = "Equipment";
     public string description = "This is a description of the equipment.";
 
@@ -13,7 +14,7 @@ public class Equipment : ScriptableObject {
     public float reloadTime = 1.0f;
     public float damage = 10.0f;
     public bool isHitscan = true;
-    public GameObject projectile;
+    public ProjectileType projectile = ProjectileType.NA;
     public bool isAutomatic = false;
     public float activationRate = 1.0f;
     public float weight = 1.0f;
@@ -23,7 +24,6 @@ public class Equipment : ScriptableObject {
     private Player_Manager playerManager;
 
     //Base use for weapons. this will handle most ranged weapons and melee weapons
-    //Gadgets will be extended from this class and will have their own use functions
     public void Use(Transform firePoint, bool isNewPress) {
         if(Time.time - lastActivationTime < activationRate){
             return;
@@ -50,9 +50,9 @@ public class Equipment : ScriptableObject {
                 }
             }
         }else{
-            //Spawn projectile
-            GameObject newProjectile = Instantiate(projectile, firePoint.position, firePoint.rotation);
-            newProjectile.GetComponent<Rigidbody>().AddForce(firePoint.forward * 1000);
+            //Spawn projectile TODO: Have a projectile manager to grab the prefab from so this can be networked
+            //GameObject newProjectile = Instantiate(projectile, firePoint.position, firePoint.rotation);
+            //newProjectile.GetComponent<Rigidbody>().AddForce(firePoint.forward * 1000);
         }
     }
 
@@ -79,8 +79,7 @@ public class Equipment : ScriptableObject {
 
 public enum EquipmentType {
     RangedWeapon,
-    MeleeWeapon,
-    Gadget
+    MeleeWeapon
 }
 
 public enum AmmoType {
@@ -90,4 +89,11 @@ public enum AmmoType {
     Shell,
     Rocket,
     Energy
+}
+
+public enum ProjectileType {
+    NA,
+    Granade,
+    Rocket,
+    Arrow
 }

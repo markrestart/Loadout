@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Player_Movement_Controller : MonoBehaviour
+public class Player_Movement_Controller : NetworkBehaviour
 {
     public float walkingSpeed = 7.5f;
     public float runningSpeed = 11.5f;
     public float jumpSpeed = 8.0f;
     public float gravity = 20.0f;
     public GameObject playerLooking;
+    public GameObject playerCamera;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
 
@@ -25,13 +27,26 @@ public class Player_Movement_Controller : MonoBehaviour
         characterController = GetComponent<CharacterController>();
 
         // Lock cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;       
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+        
     }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            playerCamera.SetActive(true);
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner){
+            return;
+        }
         // We are grounded, so recalculate move direction based on axes
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);

@@ -6,37 +6,37 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
 {
 
     [SerializeField]
-    private Archetype archetype;
+    private Data_Archetype archetype;
     [SerializeField]
-    private List<Ability> abilities;
+    private List<Data_Ability> abilities;
     [SerializeField]
-    private List<Equipment> equipments;
+    private List<Data_Equipment> equipments;
     [SerializeField]
     private Dictionary<AmmoType, int> ammos = new Dictionary<AmmoType, int>();
 
     private float playerHealth;
     public float Health { get => playerHealth; }
 
-    public List<Ability> Abilities { get => abilities; }
-    public List<Equipment> Equipments { get => equipments; }
-    public Archetype Archetype { get => archetype; }
-    public void SetArchetype(Archetype archetype)
+    public List<Data_Ability> Abilities { get => abilities; }
+    public List<Data_Equipment> Equipments { get => equipments; }
+    public Data_Archetype Archetype { get => archetype; }
+    public void SetArchetype(Data_Archetype archetype)
     {
         this.archetype = archetype;
     }
-    public void AddAbility(Ability ability)
+    public void AddAbility(Data_Ability ability)
     {
         abilities.Add(ability);
     }
-    public void AddEquipment(Equipment equipment)
+    public void AddEquipment(Data_Equipment equipment)
     {
         equipments.Add(equipment);
     }
-    public void RemoveAbility(Ability ability)
+    public void RemoveAbility(Data_Ability ability)
     {
         abilities.Remove(ability);
     }
-    public void RemoveEquipment(Equipment equipment)
+    public void RemoveEquipment(Data_Equipment equipment)
     {
         equipments.Remove(equipment);
     }
@@ -75,17 +75,13 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     void Start() {
         //TODO: Especially get rid of this, adding ammo to player
         ammos.Add(AmmoType.Bullet, 100);
-
-        Ready();
     }
 
     public void Ready(){
         isReady = true;
-        foreach(Equipment equipment in equipments){
-            equipment.Ready(this);
-        }
+
         GetComponent<Action_Handler>().Ready();
-        playerHealth = archetype != null ? archetype.health : 100;
+        playerHealth = archetype.health;
     }
     private bool isReady = false;
     public bool IsReady { get => isReady; }

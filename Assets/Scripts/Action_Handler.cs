@@ -2,16 +2,17 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Action_Handler : MonoBehaviour
+public class Action_Handler : NetworkBehaviour
 {
     [SerializeField]
     private Transform firePoint;
     private Player_Manager playerManager;
 
-    private Equipment activeEquipment;
-    public Equipment ActiveEquipment { get => activeEquipment; }
-    private Ability activeAbility;
+    private Data_Equipment activeEquipment;
+    public Data_Equipment ActiveEquipment { get => activeEquipment; }
+    private Data_Ability activeAbility;
 
     private void Awake()
     {
@@ -28,6 +29,10 @@ public class Action_Handler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner){
+            return;
+        }
+        
         if(!playerManager.IsReady){
             return;
         }
@@ -35,7 +40,7 @@ public class Action_Handler : MonoBehaviour
         {
             if(activeEquipment != null)
             {
-                activeEquipment.Use(firePoint, Input.GetButtonDown("Fire1"));
+                activeEquipment.Use(firePoint, playerManager, Input.GetButtonDown("Fire1"));
             }
         }
 
