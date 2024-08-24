@@ -26,6 +26,12 @@ public class Action_Handler : NetworkBehaviour
         activeAbility = playerManager.Abilities.FirstOrDefault();
     }
 
+    public void Unready()
+    {
+        activeEquipment = null;
+        activeAbility = null;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -47,12 +53,7 @@ public class Action_Handler : NetworkBehaviour
         if(Input.GetButtonDown("Ability")){
             if(activeAbility != null)
             {
-                if(activeAbility.IsActive)
-                {
-                    activeAbility.Deactivate();
-                }else{
-                    activeAbility.Activate();
-                }
+                activeAbility.Activate();
             }
         }
 

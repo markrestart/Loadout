@@ -19,6 +19,32 @@ public class Draft_Card
     public int AmmoAmount { get => ammoAmount; }
     public int Armor { get => armor; }
 
+    //An equaility operator for Draft_Card so that we can compare them in the Draft_Manager
+    public static bool operator ==(Draft_Card a, Draft_Card b){
+        if(a.EType != b.EType){
+            return false;
+        }
+        switch(a.EType){
+            case DraftCardType.Equipment:
+                return a.Equipment.equipmentName == b.Equipment.equipmentName;
+            case DraftCardType.Ability:
+                return a.Ability.abilityName == b.Ability.abilityName;
+            case DraftCardType.Ammo:
+                return a.AmmoType == b.AmmoType && a.AmmoAmount == b.AmmoAmount;
+            case DraftCardType.Archetype:
+                return a.Archetype.archetypeName == b.Archetype.archetypeName;
+            case DraftCardType.Armor:
+                return a.Armor == b.Armor;
+            default:
+                return false;
+        }
+    }
+
+    public static bool operator !=(Draft_Card a, Draft_Card b){
+        return !(a == b);
+    }
+
+
     public Draft_Card(Data_Equipment equipment){
         this.type = DraftCardType.Equipment;
         this.equipment = equipment;

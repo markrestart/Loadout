@@ -8,9 +8,9 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     [SerializeField]
     private Data_Archetype archetype;
     [SerializeField]
-    private List<Data_Ability> abilities;
+    private List<Data_Ability> abilities = new List<Data_Ability>();
     [SerializeField]
-    private List<Data_Equipment> equipments;
+    private List<Data_Equipment> equipments = new List<Data_Equipment>();
     [SerializeField]
     private Dictionary<AmmoType, int> ammos = new Dictionary<AmmoType, int>();
 
@@ -31,6 +31,21 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     public void AddEquipment(Data_Equipment equipment)
     {
         equipments.Add(equipment);
+    }
+    public void AddAmmo(AmmoType ammoType, int amount)
+    {
+        if(ammos.ContainsKey(ammoType))
+        {
+            ammos[ammoType] += amount;
+        }
+        else
+        {
+            ammos.Add(ammoType, amount);
+        }
+    }
+    public void AddArmor(int armor)
+    {
+        playerHealth += armor;
     }
     public void RemoveAbility(Data_Ability ability)
     {
@@ -71,17 +86,24 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
         }
     }
 
-    //TODO: temporary cod eto intialize player until drafting/selection is implemented
-    void Start() {
-        //TODO: Especially get rid of this, adding ammo to player
-        ammos.Add(AmmoType.Bullet, 100);
-    }
-
     public void Ready(){
         isReady = true;
 
         GetComponent<Action_Handler>().Ready();
         playerHealth = archetype.health;
+
+        // Lock cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void Unready(){
+        isReady = false;
+        GetComponent<Action_Handler>().Unready();
+
+        // Unlock cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
     private bool isReady = false;
     public bool IsReady { get => isReady; }

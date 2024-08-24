@@ -13,6 +13,7 @@ public class Player_Movement_Controller : NetworkBehaviour
     public GameObject playerCamera;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
+    private Player_Manager playerManager;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -24,12 +25,11 @@ public class Player_Movement_Controller : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        characterController = GetComponent<CharacterController>();        
+    }
 
-        // Lock cursor
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
-        
+    private void Awake() {
+        playerManager = GetComponent<Player_Manager>();
     }
 
     public override void OnNetworkSpawn()
@@ -45,6 +45,9 @@ public class Player_Movement_Controller : NetworkBehaviour
     void Update()
     {
         if(!IsOwner){
+            return;
+        }
+        if(!playerManager.IsReady){
             return;
         }
         // We are grounded, so recalculate move direction based on axes

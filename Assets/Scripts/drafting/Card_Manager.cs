@@ -11,6 +11,8 @@ public class Card_Manager : MonoBehaviour
     [SerializeField]
     private TMPro.TextMeshProUGUI descriptionText;
     [SerializeField]
+    private TMPro.TextMeshProUGUI weightText;
+    [SerializeField]
     private Draft_Manager draftManager;
 
     private Draft_Card card;
@@ -20,6 +22,7 @@ public class Card_Manager : MonoBehaviour
         nameText.text = card.Name;
         typeText.text = card.Type;
         descriptionText.text = card.Description;
+        weightText.text = card.Weight > 0 ? card.Weight.ToString() : "";
         this.card = card;
     }
 

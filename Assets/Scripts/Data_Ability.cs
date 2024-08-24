@@ -5,30 +5,30 @@ public class Data_Ability
 {
     public string abilityName;
     public string description;
-    public bool isContinuous;
     public float cooldown;
-    private float lastActivationTime;
-    private bool isActive;
-    public bool IsActive { get => isActive; }
+    private bool lastActivationTime;
+    private float[] values;
+    private AbilityActions action;
 
     public Data_Ability(SO_Ability scriptableAbility){
         this.abilityName = scriptableAbility.abilityName;
         this.description = scriptableAbility.description;
-        this.isContinuous = scriptableAbility.isContinuous;
         this.cooldown = scriptableAbility.cooldown;
-        this.lastActivationTime = 0.0f;
-        this.isActive = false;
+        this.values = scriptableAbility.values;
+        this.action = scriptableAbility.action;
     }
 
     public void Activate(){
-        if(Time.time - lastActivationTime < cooldown){
-            return;
+        Debug.Log("Activating " + abilityName);
+        switch(action){
+            case AbilityActions.Invisable:
+                break;
+            case AbilityActions.Health:
+                break;
+            case AbilityActions.Teleport:
+                break;
+            case AbilityActions.Shield:
+                break;
         }
-        lastActivationTime = Time.time;
-        isActive = true;
-    }
-
-    public void Deactivate(){
-        isActive = false;
     }
 }

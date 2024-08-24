@@ -13,10 +13,15 @@ public class Draft_Manager : NetworkBehaviour
     public List<AmmoType> AmmoPool;
     [SerializeField]
     private List<Card_Manager> cardManagers;
+    [SerializeField]
+    private GameObject startDraftButton;
+    [SerializeField]
+    private GameObject draftUI;
 
-    private Dictionary<ulong, List<Draft_Card>> draftState = new Dictionary<ulong, List<Draft_Card>>();
-    private Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
+    private static Dictionary<ulong, List<Draft_Card>> draftState = new Dictionary<ulong, List<Draft_Card>>();
+    private static Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
     private static List<ulong> players = new List<ulong>();
+    private static Dictionary<ulong,Reserves_Controller> reservesControllers = new Dictionary<ulong, Reserves_Controller>();
     // Start is called before the first frame update
     void Start()
     {
@@ -27,8 +32,10 @@ public class Draft_Manager : NetworkBehaviour
 
         if(IsServer){
             players.Add(OwnerClientId);
+            readyState.Add(OwnerClientId, false);
+            reservesControllers.Add(OwnerClientId, transform.GetComponent<Reserves_Controller>());
         }else{
-            transform.Find("Start Draft Button").gameObject.SetActive(false);
+            startDraftButton.gameObject.SetActive(false);
         }
         cardManagers.ForEach(x => x.gameObject.SetActive(false));
     }
@@ -41,19 +48,24 @@ public class Draft_Manager : NetworkBehaviour
                 draftState.Add(players[i], new List<Draft_Card>(draftCards.GetRange(i * 15, 15)));
             }
             //Remove the start draft button
-            transform.Find("Start Draft Button").gameObject.SetActive(false);
+            startDraftButton.gameObject.SetActive(false);
             //Display the draft cards
             var draftPacksAsIntArray = draftState.Values.Select(x => x.Select(y => CardToIntArray(y)).ToArray()).ToArray();
             SendStateAndDisplayDraftRpc(draftState.Keys.ToArray(), draftPacksAsIntArray);
         }
     }
 
+    //TODO: This probaly needs to be refactored to specify the local player's objects
     [Rpc(SendTo.Everyone)]
-    void EndDraftRpc(){
-        //TODO: Sync the player's reserves with the server
+    void EndDraftRpc(ulong[] playersArr){
+        //Put all players into the equiping phase
+        GetComponent<Reserves_Controller>().EnterEquipPhase(playersArr.ToList());
 
-        //TODO: Put all players into the equiping phase
+        //Disable the draft manager
+        draftUI.gameObject.SetActive(false);
     }
+
+
 
 //TODO: have the draft rotation alternate between clockwise and counter clockwise
     void RotateDraft(){
@@ -75,14 +87,17 @@ public class Draft_Manager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void SelectCardRpc(ulong player, ushort[] cardAsArr){
         var card = IntArrayToCard(cardAsArr);
-        draftState[player].Remove(card);
+        //Add the card to the player's reserves
+        reservesControllers[player].AddToReserves(card);
+        //Remove the first instance of the card from the player's draftState using the equality operator
+        draftState[player].Remove(draftState[player].First(x => x == card));
         //Set the player's ready state to true
         readyState[player] = true;
 
         //if all players have selected a card(based on ready state), move to the next round
         if(readyState.Values.All(x => x == true)){
             if(draftState[players[0]].Count == 0){
-                EndDraftRpc();
+                EndDraftRpc(players.ToArray());
             }else{
             RotateDraft();
             }
@@ -91,13 +106,12 @@ public class Draft_Manager : NetworkBehaviour
     }
 
     public void SelectCard(Draft_Card card){
-        //TODO: Add card to player's reserves
-        
-        SelectCardRpc(OwnerClientId, CardToIntArray(card));
         //Turn off the card managers
         foreach(var cardManager in cardManagers){
             cardManager.gameObject.SetActive(false);
         }
+
+        SelectCardRpc(OwnerClientId, CardToIntArray(card));
     }
             
     [Rpc(SendTo.Everyone)]
@@ -128,7 +142,7 @@ public class Draft_Manager : NetworkBehaviour
         }
     }
 
-    private ushort[] CardToIntArray(Draft_Card card){
+    public ushort[] CardToIntArray(Draft_Card card){
         var arr = new ushort[3];
         arr[0] = (ushort)card.EType;
         switch(card.EType){
@@ -156,7 +170,7 @@ public class Draft_Manager : NetworkBehaviour
         return arr;
     }
 
-    private Draft_Card IntArrayToCard(ushort[] arr){
+    public Draft_Card IntArrayToCard(ushort[] arr){
         DraftCardType type = (DraftCardType)arr[0];
         switch(type){
             case DraftCardType.Equipment:
@@ -178,13 +192,13 @@ public class Draft_Manager : NetworkBehaviour
         List<Draft_Card> draftCards = new List<Draft_Card>();
         for(int i = 0; i < numberOfCards; i++){
             float percent = (float)i/numberOfCards;
-            if(percent <= 0.45f){
+            if(percent <= 0.25f){
                 //Weapon
                 draftCards.Add(new Draft_Card(new Data_Equipment(WeaponPool[UnityEngine.Random.Range(0, WeaponPool.Count)])));
-            }else if(percent <= 0.55f){
+            }else if(percent <= 0.30f){
                 //Armor
-                //draftCards.Add(new Draft_Card(ArmorPool[Random.Range(0, ArmorPool.Count)]));
-            }else if(percent <= 0.7f){
+                draftCards.Add(new Draft_Card(ArmorPool[UnityEngine.Random.Range(0, ArmorPool.Count)]));
+            }else if(percent <= 0.45f){
                 //Ammo TODO: Hardcoded ammo amounts should be replaced with a more dynamic system
                 var amount = 0;
                 var ammoType = AmmoPool[UnityEngine.Random.Range(0, AmmoPool.Count)];
@@ -206,7 +220,7 @@ public class Draft_Manager : NetworkBehaviour
                         break;
                 }
                 draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammoType, amount)));
-            }else if(percent <= 0.9f){
+            }else if(percent <= 0.8f){
                 //Ability
                 draftCards.Add(new Draft_Card(new Data_Ability(AbilityPool[UnityEngine.Random.Range(0, AbilityPool.Count)])));
             }else{

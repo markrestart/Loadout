@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc81f93f839db9b9e871aefdd0b7192d, type: 3}
-  m_Name: FullAuto
+  m_Name: Rocket Launcher
   m_EditorClassIdentifier: 
-  equipmentName: Full Auto Gun
-  description: point and shoot
+  equipmentName: Rocket Launcher
+  description: Two one hit kill rockets. Make them count.
   equipmentType: 0
   ammoType: 2
-  magazineSize: 60
-  reloadTime: 1
-  damage: 10
-  isHitscan: 1
-  projectile: 0
+  magazineSize: 2
+  reloadTime: 5
+  damage: 120
+  isHitscan: 0
+  projectile: 2
   isAutomatic: 1
-  activationRate: 0.25
+  activationRate: 1
   weight: 45

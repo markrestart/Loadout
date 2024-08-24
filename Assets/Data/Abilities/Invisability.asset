@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 262a53209a65f393da4542ea38318f66, type: 3}
-  m_Name: Quick Heal
+  m_Script: {fileID: 11500000, guid: 4d7c21e6b053d689f8d44a768f20220b, type: 3}
+  m_Name: Invisability
   m_EditorClassIdentifier: 
-  abilityName: Quick Heal
-  description: Get a burst of healing.
+  abilityName: Invisability
+  description: Erase your breath
   isContinuous: 0
-  cooldown: 60
+  cooldown: 1
