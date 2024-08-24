@@ -41,13 +41,13 @@ public class Reserve_Card_Manager : MonoBehaviour
             reservesController.RemoveFromSelected(card);
         }
 
-        transform.GetComponent<UnityEngine.UI.Image>().color = isToggled ? Color.gray: Color.blue;
+        transform.GetComponent<UnityEngine.UI.Image>().color = isToggled ? Color.gray: new Color(0.3186487f, 0.3396226f, 0.2803489f);
         reservesController.UpdateEquipTexts();
     }
 
     public void Deselect()
     {
         isToggled = false;
-        transform.GetComponent<UnityEngine.UI.Image>().color = Color.blue;
+        transform.GetComponent<UnityEngine.UI.Image>().color = new Color(0.3186487f, 0.3396226f, 0.2803489f);
     }
 }

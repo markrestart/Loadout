@@ -70,7 +70,7 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
         {
             ammos[ammoType] -= amount;
         }
-        if(ammos[ammoType] <= 0)
+        if(ammos.ContainsKey(ammoType) && ammos[ammoType] <= 0)
         {
             ammos.Remove(ammoType);
         }
@@ -90,7 +90,7 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
         isReady = true;
 
         GetComponent<Action_Handler>().Ready();
-        playerHealth = archetype.health;
+        playerHealth = archetype != null ? archetype.health : 100;
 
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;

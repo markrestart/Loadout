@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc81f93f839db9b9e871aefdd0b7192d, type: 3}
   m_Name: Basic Melee
   m_EditorClassIdentifier: 
-  equipmentName: Sword
-  description: Swish swich. Melee
+  equipmentName: Punch
+  description: punch
   equipmentType: 1
   ammoType: 0
   magazineSize: 0
   reloadTime: 0
-  damage: 20
+  damage: 10
   isHitscan: 1
   projectile: 0
   isAutomatic: 0
-  activationRate: 0.6
-  weight: 15
+  activationRate: 1
+  weight: 0

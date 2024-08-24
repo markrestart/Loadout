@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Invisability
   m_EditorClassIdentifier: 
   abilityName: Invisability
-  description: Erase your breath
-  isContinuous: 0
-  cooldown: 1
+  description: Go invisable for 13 seconds. 30 second recharge
+  action: 0
+  values:
+  - 13
+  cooldown: 30

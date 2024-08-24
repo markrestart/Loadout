@@ -23,4 +23,4 @@ MonoBehaviour:
   projectile: 0
   isAutomatic: 1
   activationRate: 0.25
-  weight: 45
+  weight: 25

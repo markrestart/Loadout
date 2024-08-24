@@ -100,6 +100,7 @@ public class Reserves_Controller : NetworkBehaviour
             if(iCard.IsToggled){
                 if(iCard.Card.EType == DraftCardType.Archetype){
                     archetypeCount++;
+                    totalCarryWeight = iCard.Card.Archetype.carryWeight;
                 }else if(iCard.Card.Weight > 0){
                     weightCount += iCard.Card.Weight;
                 }else if(iCard.Card.EType == DraftCardType.Ability){
@@ -124,8 +125,8 @@ public class Reserves_Controller : NetworkBehaviour
                 equipWeight += iCard.Card.Weight;
                 if(equipWeight > totalCarryWeight){
                     iCard.Deselect();
+                    equipWeight -= iCard.Card.Weight;
                 }
-                equipWeight -= iCard.Card.Weight;
             }
         }
     }

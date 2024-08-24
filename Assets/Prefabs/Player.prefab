@@ -1268,13 +1268,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponPool:
   - {fileID: 11400000, guid: 0ac24fa8a1b982773874f58b0f11ee28, type: 2}
+  - {fileID: 11400000, guid: 9d22d8ee8d90904bd8a1d62a77b73f37, type: 2}
+  - {fileID: 11400000, guid: 22f70d8cc16d4e529a761e1f7d20f2d2, type: 2}
+  - {fileID: 11400000, guid: 8359d5e814c6d2a3baecf2b6ca35bdc7, type: 2}
+  - {fileID: 11400000, guid: f735ec2f366181d90846ea9e4a007158, type: 2}
+  - {fileID: 11400000, guid: 2985eb0ecbc85e15ab5e87d180c82a4d, type: 2}
   AbilityPool:
   - {fileID: 11400000, guid: b0a8e86031516d0429134ba7f9586e1d, type: 2}
+  - {fileID: 11400000, guid: beaf597e0336b11c28635d008e4bb7a2, type: 2}
+  - {fileID: 11400000, guid: d34f5fed57101f3ce92d6be7cfc59c8d, type: 2}
+  - {fileID: 11400000, guid: 89904adb222c824918be8d8b2ea317de, type: 2}
   ArchetypePool:
   - {fileID: 11400000, guid: 2ad298872d4b99106addafb950405625, type: 2}
-  - {fileID: 11400000, guid: 4d431d5531df34eb68a46b4ffb9b9837, type: 2}
+  - {fileID: 11400000, guid: 508da9ae9785e78e7a315dc0f83edd0c, type: 2}
+  - {fileID: 11400000, guid: 74dca45893fe776a5a39b8d3e669b5f9, type: 2}
   ArmorPool: 050000000a000000190000002800000032000000
-  AmmoPool: 0100000002000000030000000400000000000000
+  AmmoPool: 0100000002000000030000000400000005000000
   cardManagers:
   - {fileID: 1744636447398856798}
   - {fileID: 4666514638074326717}
