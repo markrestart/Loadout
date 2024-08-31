@@ -3970,6 +3970,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50de1af7ee7774fe82cc34b7cc133a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectilePrefabs:
+  - type: 3
+    prefab: {fileID: 3139182890032729805, guid: 4bfcfdaeb287e481aa6834dbaab354cd, type: 3}
+  - type: 2
+    prefab: {fileID: 3139182890032729805, guid: ec664ebad9d8717bfa9b1e0403680a78, type: 3}
 --- !u!4 &1368647874
 Transform:
   m_ObjectHideFlags: 0
@@ -4855,7 +4860,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1772428609}
   m_Layer: 0
-  m_Name: Spawn points
+  m_Name: <SpawnPoints>
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

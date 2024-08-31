@@ -40,6 +40,11 @@ public class Player_Movement_Controller : NetworkBehaviour
         }
     }
 
+    public void AddForce(Vector3 force)
+    {
+        moveDirection += force;
+    }
+
 
     // Update is called once per frame
     void Update()

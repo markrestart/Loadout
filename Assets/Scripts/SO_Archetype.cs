@@ -13,4 +13,5 @@ public class SO_Archetype : ScriptableObject {
     public float health = 100.0f;
     public float carryWeight = 10.0f;
     public int abilitySlots = 3;
+    public float abilityCooldownModifier = 1;
 }

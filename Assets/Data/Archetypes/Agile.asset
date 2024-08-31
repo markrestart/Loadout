@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2308ed5bcdc23bcf4b4ab58382684650, type: 3}
-  m_Name: Engineer
+  m_Name: Agile
   m_EditorClassIdentifier: 
-  archetypeName: Engineer
-  description: Bring it all with you.
-  walkingSpeedModifier: 0.6
-  runningSpeedModifier: 0.6
-  jumpSpeedModifier: 0.5
-  hitboxSizeModifier: {x: 1, y: 0.5, z: 1}
-  meleeModifier: 1.5
-  health: 100
-  carryWeight: 300
+  archetypeName: Tiny
+  description: High survivability. Low damage
+  walkingSpeedModifier: 1
+  runningSpeedModifier: 1.5
+  jumpSpeedModifier: 2
+  hitboxSizeModifier: {x: 0.8, y: 0.9, z: 0.8}
+  meleeModifier: 0.9
+  health: 120
+  carryWeight: 50
   abilitySlots: 2

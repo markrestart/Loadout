@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc81f93f839db9b9e871aefdd0b7192d, type: 3}
   m_Name: Bow
   m_EditorClassIdentifier: 
-  equipmentName: Bow
+  equipmentName: Cross Bow
   description: Slow, high damage, projectile weapon. Comes with 10 arrows
   equipmentType: 0
   ammoType: 1
   magazineSize: 10
   reloadTime: 0
-  damage: 50
+  damage: 30
   isHitscan: 0
   projectile: 3
   isAutomatic: 0

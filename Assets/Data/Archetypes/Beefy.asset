@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2308ed5bcdc23bcf4b4ab58382684650, type: 3}
-  m_Name: Slow
+  m_Name: Beefy
   m_EditorClassIdentifier: 
-  archetypeName: Slow
+  archetypeName: Beefy
   description: Big and slow, but with higher health and improved melee damage
   walkingSpeedModifier: 0.8
   runningSpeedModifier: 0.8
@@ -21,4 +21,4 @@ MonoBehaviour:
   meleeModifier: 1.5
   health: 120
   carryWeight: 120
-  abilitySlots: 3
+  abilitySlots: 2

@@ -21,6 +21,6 @@ MonoBehaviour:
   damage: 10
   isHitscan: 1
   projectile: 0
-  isAutomatic: 1
-  activationRate: 0.1
+  isAutomatic: 0
+  activationRate: 0.3
   weight: 20

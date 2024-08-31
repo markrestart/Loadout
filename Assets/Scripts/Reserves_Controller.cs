@@ -25,6 +25,8 @@ public class Reserves_Controller : NetworkBehaviour
     private Draft_Manager draftManager;
     [SerializeField]
     private Player_Manager playerManager;
+    [SerializeField]
+    private SO_Equipment defaultEquipment;
 
     private Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
 
@@ -177,6 +179,7 @@ public class Reserves_Controller : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     public void EquipAndReadyRpc(ulong player, ushort[][] cardsAsArr){
         var equipedCards = cardsAsArr.Select(x => draftManager.IntArrayToCard(x)).ToArray();
+        playerManager.AddEquipment(new Data_Equipment(defaultEquipment));
         foreach(var card in equipedCards){
             switch(card.EType){
                 case DraftCardType.Archetype:

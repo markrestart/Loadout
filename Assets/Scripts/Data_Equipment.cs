@@ -27,7 +27,7 @@ public class Data_Equipment
     private float lastReloadTime;
 
         //Base use for weapons. this will handle most ranged weapons and melee weapons
-    public void Use(Transform firePoint, Player_Manager playerManager, bool isNewPress) {
+    public void Use(Transform firePoint, Player_Manager playerManager, Action_Handler action_Handler, bool isNewPress) {
         if(Time.time - lastActivationTime < activationRate){
             return;
         }
@@ -44,27 +44,14 @@ public class Data_Equipment
         lastActivationTime = Time.time;
         if(equipmentType == EquipmentType.MeleeWeapon){
             //Deal damage to all enemies in a radius
-            Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.0f);
-            foreach(Collider hitCollider in hitColliders){
-                if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
-                    hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage);
-                }
-            }
+            action_Handler.MeleeAttackRpc(damage);
         }
         else if(isHitscan){
             currentAmmo--;
-            //Spawn hitscan projectile
-            RaycastHit hit;
-            if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
-                //If the raycast hits something with a Damage_Handler, deal damage
-                if(hit.collider.GetComponent<Damage_Handler>()){
-                    hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage);
-                }
-            }
+            action_Handler.FireHitscanRpc(damage);
         }else{
-            //Spawn projectile TODO: Have a projectile manager to grab the prefab from so this can be networked
-            GameObject newProjectile = GameObject.Instantiate(PrefabLibrary.instance.projectiles[projectile], firePoint.position, firePoint.rotation);
-            newProjectile.GetComponent<Rigidbody>().AddForce(firePoint.forward * 1000);
+            currentAmmo--;
+            action_Handler.FireProjectileRpc(projectile, damage);
         }
     }
     public void Ready() {

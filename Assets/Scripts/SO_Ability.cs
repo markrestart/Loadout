@@ -13,4 +13,7 @@ public enum AbilityActions{
     Health,
     Teleport,
     Shield,
+    Jump,
+    DamageBoost,
+    FireRateBoost,
 }

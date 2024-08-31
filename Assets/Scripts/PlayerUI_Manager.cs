@@ -10,6 +10,12 @@ public class PlayerUI_Manager : MonoBehaviour
     private TMPro.TextMeshProUGUI ReloadText;
     [SerializeField]
     private TMPro.TextMeshProUGUI healthText;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI weaponNameText;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI abilityNameText;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI abilityCooldownText;
 
     private Player_Manager playerManager;
     private Action_Handler actionHandler;
@@ -27,9 +33,39 @@ public class PlayerUI_Manager : MonoBehaviour
             return;
         }
         if(actionHandler.ActiveEquipment != null && actionHandler.ActiveEquipment.ammoType != AmmoType.NA){
-        ammoText.text = actionHandler.ActiveEquipment.CurrentAmmo.ToString();
-        ReloadText.text = playerManager.AmmoCount(actionHandler.ActiveEquipment.ammoType).ToString();
+            if(actionHandler.ActiveEquipment.CurrentAmmo <= 0){
+                ammoText.text = "--";
+            }else{
+                ammoText.text = actionHandler.ActiveEquipment.CurrentAmmo.ToString();
+            }
+            if(playerManager.AmmoCount(actionHandler.ActiveEquipment.ammoType) <= 0){
+                ReloadText.text = "--";
+            }else{
+                ReloadText.text = playerManager.AmmoCount(actionHandler.ActiveEquipment.ammoType).ToString();
+            }
+        }else{
+            ammoText.text = "";
+            ReloadText.text = "";
         }
         healthText.text = playerManager.Health.ToString();
+        if(actionHandler.ActiveEquipment != null){
+            weaponNameText.text = actionHandler.ActiveEquipment.equipmentName;
+        }else{
+            weaponNameText.text = "";
+            ammoText.text = "";
+            ReloadText.text = "";
+        }
+        if(actionHandler.ActiveAbility != null){
+            abilityNameText.text = actionHandler.ActiveAbility.abilityName;
+            var cooldown = actionHandler.ActiveAbility.CooldownRemaining;
+            if(cooldown > 0){
+                abilityCooldownText.text = cooldown.ToString("F0");
+            }else{
+                abilityCooldownText.text = "";
+            }
+        }else{
+            abilityNameText.text = "";
+            abilityCooldownText.text = "";
+        }
     }
 }
