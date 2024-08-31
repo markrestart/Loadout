@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Data_Equipment
@@ -36,13 +37,22 @@ public class Data_Equipment
         if(!isAutomatic && !isNewPress){
             return;
         }
-        if(currentAmmo <= 0){
+        if(equipmentType == EquipmentType.RangedWeapon && currentAmmo <= 0){
             Reload(playerManager);
             return;
         }
         lastActivationTime = Time.time;
-        currentAmmo--;
-        if(isHitscan){
+        if(equipmentType == EquipmentType.MeleeWeapon){
+            //Deal damage to all enemies in a radius
+            Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.0f);
+            foreach(Collider hitCollider in hitColliders){
+                if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
+                    hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage);
+                }
+            }
+        }
+        else if(isHitscan){
+            currentAmmo--;
             //Spawn hitscan projectile
             RaycastHit hit;
             if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
@@ -53,8 +63,8 @@ public class Data_Equipment
             }
         }else{
             //Spawn projectile TODO: Have a projectile manager to grab the prefab from so this can be networked
-            //GameObject newProjectile = Instantiate(projectile, firePoint.position, firePoint.rotation);
-            //newProjectile.GetComponent<Rigidbody>().AddForce(firePoint.forward * 1000);
+            GameObject newProjectile = GameObject.Instantiate(PrefabLibrary.instance.projectiles[projectile], firePoint.position, firePoint.rotation);
+            newProjectile.GetComponent<Rigidbody>().AddForce(firePoint.forward * 1000);
         }
     }
     public void Ready() {
