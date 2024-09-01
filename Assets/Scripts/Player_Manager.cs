@@ -154,6 +154,8 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     public void Ready(){
         isReady = true;
 
+        GetComponent<PlayerUI_Manager>().SetInGameUIActive(true);
+
         GetComponent<Action_Handler>().Ready();
         playerHealth = archetype != null ? archetype.health : 100;
 
@@ -192,6 +194,7 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
         // Unlock cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        GetComponent<PlayerUI_Manager>().SetInGameUIActive(false);
     }
     private bool isReady = false;
     public bool IsReady { get => isReady; }

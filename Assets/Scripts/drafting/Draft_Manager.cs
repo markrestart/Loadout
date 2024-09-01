@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Draft_Manager : NetworkBehaviour
@@ -18,27 +20,58 @@ public class Draft_Manager : NetworkBehaviour
     [SerializeField]
     private GameObject draftUI;
 
-    private static Dictionary<ulong, List<Draft_Card>> draftState = new Dictionary<ulong, List<Draft_Card>>();
-    private static Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
-    private static List<ulong> players = new List<ulong>();
-    private static Dictionary<ulong,Reserves_Controller> reservesControllers = new Dictionary<ulong, Reserves_Controller>();
+    private Dictionary<ulong, List<Draft_Card>> draftState = new Dictionary<ulong, List<Draft_Card>>();
+    private Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
+    private List<ulong> players = new List<ulong>();
+    private Dictionary<ulong,Reserves_Controller> reservesControllers = new Dictionary<ulong, Reserves_Controller>();
     // Start is called before the first frame update
+    public static Draft_Manager Instance;
     void Start()
     {
-        //Disable this instance if it is not on the owner client
-        if(OwnerClientId != NetworkManager.Singleton.LocalClientId){
-            gameObject.SetActive(false);
-        }
-
-        if(IsServer){
-            players.Add(OwnerClientId);
-            readyState.Add(OwnerClientId, false);
-            reservesControllers.Add(OwnerClientId, transform.GetComponent<Reserves_Controller>());
-        }else{
+        draftUI.gameObject.SetActive(true);
+        if(!IsServer){
             startDraftButton.gameObject.SetActive(false);
         }
         cardManagers.ForEach(x => x.gameObject.SetActive(false));
+
+        if(IsServer){
+            AddPlayerRpc(NetworkManager.Singleton.LocalClientId);
+        }
+
+        if(Instance == null){
+            Instance = this;
+        }else{
+            Destroy(this);
+        }
     }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if(!IsServer){
+            AddPlayerRpc(NetworkManager.Singleton.LocalClientId);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void AddPlayerRpc(ulong clientId){
+        Debug.Log("Adding player: " + clientId);
+        players.Add(clientId);
+        readyState.Add(clientId, false);
+        //Find the reserves controller for the player
+        StartCoroutine(FindReservesController(clientId));
+    }
+
+    private IEnumerator FindReservesController(ulong clientId){
+        yield return new WaitForSeconds(1);
+        var reservesController = FindObjectsOfType<Reserves_Controller>().FirstOrDefault(x => x.OwnerClientId == clientId);
+        if(reservesController != null){
+            reservesControllers.Add(clientId, reservesController);
+        }else{
+        StartCoroutine(FindReservesController(clientId));
+        }
+    }
+
 
     public void BeginDraft(){
         if(IsServer){
@@ -50,21 +83,21 @@ public class Draft_Manager : NetworkBehaviour
             //Remove the start draft button
             startDraftButton.gameObject.SetActive(false);
             //Display the draft cards
-            var draftPacksAsIntArray = draftState.Values.Select(x => x.Select(y => CardToIntArray(y)).ToArray()).ToArray();
-            SendStateAndDisplayDraftRpc(draftState.Keys.ToArray(), draftPacksAsIntArray);
+            SendStateAndDisplayDraftRpc(stateToString(draftState));
         }
     }
 
     //TODO: This probaly needs to be refactored to specify the local player's objects
     [Rpc(SendTo.Everyone)]
-    void EndDraftRpc(ulong[] playersArr){
+    void EndDraftRpc(){
         //Put all players into the equiping phase
-        GetComponent<Reserves_Controller>().EnterEquipPhase(playersArr.ToList());
+        foreach(var reservesController in reservesControllers){
+            reservesController.Value.EnterEquipPhase(players.ToList());
+        }
 
         //Disable the draft manager
         draftUI.gameObject.SetActive(false);
     }
-
 
 
 //TODO: have the draft rotation alternate between clockwise and counter clockwise
@@ -77,15 +110,14 @@ public class Draft_Manager : NetworkBehaviour
             }
             draftState[players[players.Count - 1]] = temp;
 
-            var draftPacksAsIntArray = draftState.Values.Select(x => x.Select(y => CardToIntArray(y)).ToArray()).ToArray();
-            SendStateAndDisplayDraftRpc(draftState.Keys.ToArray(), draftPacksAsIntArray);
+            SendStateAndDisplayDraftRpc(stateToString(draftState));
         }
     }
 
     // When a player selects a card, use an rpc to tell the server to remove it from the draftState. Add it to the player's reserves.
 
     [Rpc(SendTo.Server)]
-    public void SelectCardRpc(ulong player, ushort[] cardAsArr){
+    public void SelectCardRpc(ulong player, int[] cardAsArr){
         var card = IntArrayToCard(cardAsArr);
         //Add the card to the player's reserves
         reservesControllers[player].AddToReserves(card);
@@ -97,12 +129,49 @@ public class Draft_Manager : NetworkBehaviour
         //if all players have selected a card(based on ready state), move to the next round
         if(readyState.Values.All(x => x == true)){
             if(draftState[players[0]].Count == 0){
-                EndDraftRpc(players.ToArray());
+                EndDraftRpc();
             }else{
-            RotateDraft();
+                readyState = readyState.ToDictionary(x => x.Key, x => false);
+                RotateDraft();
             }
         }
 
+    }
+
+    private string stateToString(Dictionary<ulong, List<Draft_Card>> state){
+        string str = "";
+        foreach(var player in state){
+            str += player.Key + ":";
+            foreach(var card in player.Value){
+                int[] cardAsArr = RealCardToIntArray(card);
+                str += cardAsArr[0] + "." + cardAsArr[1] + "." + cardAsArr[2] + ",";
+            }
+            str = str.Remove(str.Length - 1);
+            str += "\n";
+        }
+        str = str.Remove(str.Length - 1);
+        return str;
+    }
+
+    private Dictionary<ulong, List<Draft_Card>> stateFromString(string str){
+        var state = new Dictionary<ulong, List<Draft_Card>>();
+        var playerStates = str.Split('\n');
+        foreach(var playerState in playerStates){
+            var playerStateArr = playerState.Split(':');
+            var player = ulong.Parse(playerStateArr[0]);
+            var cards = playerStateArr[1].Split(',');
+            var playerCards = new List<Draft_Card>();
+            foreach(var card in cards){
+                var cardArr = card.Split('.');
+                var cardAsArr = new int[3];
+                cardAsArr[0] = int.Parse(cardArr[0]);
+                cardAsArr[1] = int.Parse(cardArr[1]);
+                cardAsArr[2] = int.Parse(cardArr[2]);
+                playerCards.Add(IntArrayToCard(cardAsArr));
+            }
+            state.Add(player, playerCards);
+        }
+        return state;
     }
 
     public void SelectCard(Draft_Card card){
@@ -111,23 +180,13 @@ public class Draft_Manager : NetworkBehaviour
             cardManager.gameObject.SetActive(false);
         }
 
-        SelectCardRpc(OwnerClientId, CardToIntArray(card));
+        SelectCardRpc(NetworkManager.Singleton.LocalClientId, CardToIntArray(card));
     }
             
     [Rpc(SendTo.Everyone)]
-    private void SendStateAndDisplayDraftRpc(ulong[] players, ushort[][][] draftPacks){
-
-        var draftPacksAsCards = new List<List<Draft_Card>>();
-        foreach(var pack in draftPacks){
-            var draftPack = new List<Draft_Card>();
-            foreach(var card in pack){
-                draftPack.Add(IntArrayToCard(card));
-            }
-            draftPacksAsCards.Add(draftPack);
-        }
-        draftState = players.Zip(draftPacksAsCards, (x, y) => new KeyValuePair<ulong, List<Draft_Card>>(x, y)).ToDictionary(x => x.Key, x => x.Value);
-        
-        var numCardsToDisplay = draftState[OwnerClientId].Count % 5;
+    private void SendStateAndDisplayDraftRpc(string stateAsString){
+        draftState = stateFromString(stateAsString);
+        var numCardsToDisplay = draftState[NetworkManager.Singleton.LocalClientId].Count % 5;
         if (numCardsToDisplay == 0){
             numCardsToDisplay = 5;
         }
@@ -138,39 +197,67 @@ public class Draft_Manager : NetworkBehaviour
                 continue;
             }
             cardManagers[i].gameObject.SetActive(true);
-            cardManagers[i].SetCard(draftState[OwnerClientId][i]);
+            cardManagers[i].SetCard(draftState[NetworkManager.Singleton.LocalClientId][i]);
         }
     }
 
-    public ushort[] CardToIntArray(Draft_Card card){
-        var arr = new ushort[3];
-        arr[0] = (ushort)card.EType;
+    public int[] CardToIntArray(Draft_Card card){
+        var arr = new int[3];
+        arr[0] = (int)card.EType;
         switch(card.EType){
             case DraftCardType.Equipment:
-                arr[1] = (ushort)WeaponPool.FindIndex(x => x.equipmentName == card.Equipment.equipmentName);
+                arr[1] = (int)WeaponPool.FindIndex(x => x.equipmentName == card.Equipment.equipmentName);
                 arr[2] = 0;
                 break;
             case DraftCardType.Ability:
-                arr[1] = (ushort)AbilityPool.FindIndex(x => x.abilityName == card.Ability.abilityName);
+                arr[1] = (int)AbilityPool.FindIndex(x => x.abilityName == card.Ability.abilityName);
                 arr[2] = 0;
                 break;
             case DraftCardType.Archetype:
-                arr[1] = (ushort)ArchetypePool.FindIndex(x => x.archetypeName == card.Archetype.archetypeName);
+                arr[1] = (int)ArchetypePool.FindIndex(x => x.archetypeName == card.Archetype.archetypeName);
                 arr[2] = 0;
                 break;
             case DraftCardType.Ammo:
-                arr[1] = (ushort)card.AmmoType;
-                arr[2] = (ushort)card.AmmoAmount;
+                arr[1] = (int)card.AmmoType;
+                arr[2] = (int)card.AmmoAmount;
                 break;
             case DraftCardType.Armor:
-                arr[1] = (ushort)card.Armor;
+                arr[1] = (int)card.Armor;
                 arr[2] = 0;
                 break;
         }
         return arr;
     }
 
-    public Draft_Card IntArrayToCard(ushort[] arr){
+    public int[] RealCardToIntArray(Draft_Card card){
+        var arr = new int[3];
+        arr[0] = (int)card.EType;
+        switch(card.EType){
+            case DraftCardType.Equipment:
+                arr[1] = (int)WeaponPool.FindIndex(x => x.equipmentName == card.Equipment.equipmentName);
+                arr[2] = 0;
+                break;
+            case DraftCardType.Ability:
+                arr[1] = (int)AbilityPool.FindIndex(x => x.abilityName == card.Ability.abilityName);
+                arr[2] = 0;
+                break;
+            case DraftCardType.Archetype:
+                arr[1] = (int)ArchetypePool.FindIndex(x => x.archetypeName == card.Archetype.archetypeName);
+                arr[2] = 0;
+                break;
+            case DraftCardType.Ammo:
+                arr[1] = (int)card.AmmoType;
+                arr[2] = (int)card.AmmoAmount;
+                break;
+            case DraftCardType.Armor:
+                arr[1] = (int)card.Armor;
+                arr[2] = 0;
+                break;
+        }
+        return arr;
+    }
+
+        public Draft_Card IntArrayToCard(int[] arr){
         DraftCardType type = (DraftCardType)arr[0];
         switch(type){
             case DraftCardType.Equipment:

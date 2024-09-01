@@ -16,6 +16,8 @@ public class PlayerUI_Manager : MonoBehaviour
     private TMPro.TextMeshProUGUI abilityNameText;
     [SerializeField]
     private TMPro.TextMeshProUGUI abilityCooldownText;
+    [SerializeField]
+    private GameObject inGameUI;
 
     private Player_Manager playerManager;
     private Action_Handler actionHandler;
@@ -24,6 +26,10 @@ public class PlayerUI_Manager : MonoBehaviour
     {
         playerManager = GetComponent<Player_Manager>();
         actionHandler = GetComponent<Action_Handler>();
+    }
+
+    public void SetInGameUIActive(bool active){
+        inGameUI.SetActive(active);
     }
 
     // Update is called once per frame

@@ -22,8 +22,6 @@ public class Reserves_Controller : NetworkBehaviour
     [SerializeField]
     private TMPro.TextMeshProUGUI abilitiesCountText;
     [SerializeField]
-    private Draft_Manager draftManager;
-    [SerializeField]
     private Player_Manager playerManager;
     [SerializeField]
     private SO_Equipment defaultEquipment;
@@ -133,12 +131,31 @@ public class Reserves_Controller : NetworkBehaviour
         }
     }
 
+    private string reserveDataToString(int[][] reserveData){
+        string str = "";
+        foreach(var card in reserveData){
+            str += card[0] + "." + card[1] + "." + card[2] + ",";
+        }
+        str = str.Remove(str.Length - 1);
+        return str;
+    }
+
+    private int[][] reserveDataFromString(string reserveData){
+        var cards = reserveData.Split(',');
+        var cardData = new List<int[]>();
+        foreach(var card in cards){
+            var cardParts = card.Split('.');
+            cardData.Add(new int[]{int.Parse(cardParts[0]), int.Parse(cardParts[1]), int.Parse(cardParts[2])});
+        }
+        return cardData.ToArray();
+    }
+
     public void EnterEquipPhase(List<ulong> numberOfPlayers)
     {
         //Sync the reserves
         if(IsServer){
-            var reserveData = reserves.Select(x => draftManager.CardToIntArray(x)).ToArray();
-            SyncReserveRPC(reserveData);
+            var reserveData = reserves.Select(x => Draft_Manager.Instance.CardToIntArray(x)).ToArray();
+            SyncReserveRPC(reserveDataToString(reserveData));
         }
 
         if(IsOwner){
@@ -173,12 +190,13 @@ public class Reserves_Controller : NetworkBehaviour
             }
         }
 
-        EquipAndReadyRpc(NetworkManager.LocalClientId, equipedCards.Select(x => draftManager.CardToIntArray(x)).ToArray());
+        EquipAndReadyRpc(NetworkManager.LocalClientId, reserveDataToString(equipedCards.Select(x => Draft_Manager.Instance.CardToIntArray(x)).ToArray()));
     }
 
     [Rpc(SendTo.Everyone)]
-    public void EquipAndReadyRpc(ulong player, ushort[][] cardsAsArr){
-        var equipedCards = cardsAsArr.Select(x => draftManager.IntArrayToCard(x)).ToArray();
+    public void EquipAndReadyRpc(ulong player, string cardsAsStr){
+        var cardsAsArr = reserveDataFromString(cardsAsStr);
+        var equipedCards = cardsAsArr.Select(x => Draft_Manager.Instance.IntArrayToCard(x)).ToArray();
         playerManager.AddEquipment(new Data_Equipment(defaultEquipment));
         foreach(var card in equipedCards){
             switch(card.EType){
@@ -217,10 +235,11 @@ public class Reserves_Controller : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    public void SyncReserveRPC(ushort[][] reserveData){
+    public void SyncReserveRPC(string reserveData){
+        var reserveDataArr = reserveDataFromString(reserveData);
         reserves = new List<Draft_Card>();
-        foreach(var cardData in reserveData){
-            var card = draftManager.IntArrayToCard(cardData);
+        foreach(var cardData in reserveDataArr){
+            var card = Draft_Manager.Instance.IntArrayToCard(cardData);
             reserves.Add(card);
         }
     }
