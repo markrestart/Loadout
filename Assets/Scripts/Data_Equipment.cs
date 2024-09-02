@@ -65,6 +65,10 @@ public class Data_Equipment
         currentAmmo = magazineSize;
     }
 
+    public void SetCurrentAmmo(int ammo){
+        currentAmmo = ammo;
+    }
+
     public void Reload(Player_Manager playerManager) {
         var ammoNeeded = magazineSize - currentAmmo;
         var ammoCount = playerManager.AmmoCount(ammoType);

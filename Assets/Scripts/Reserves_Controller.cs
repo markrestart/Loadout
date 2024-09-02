@@ -164,11 +164,16 @@ public class Reserves_Controller : NetworkBehaviour
         foreach(var card in reserveData){
             str += card[0] + "." + card[1] + "." + card[2] + ",";
         }
-        str = str.Remove(str.Length - 1);
+        if(str.Length > 0){
+            str = str.Remove(str.Length - 1);
+        }
         return str;
     }
 
     private int[][] reserveDataFromString(string reserveData){
+        if(reserveData.Length == 0){
+            return new int[0][];
+        }
         var cards = reserveData.Split(',');
         var cardData = new List<int[]>();
         foreach(var card in cards){

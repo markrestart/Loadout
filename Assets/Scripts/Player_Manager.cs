@@ -81,6 +81,18 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
         }
     }
 
+    public void SetAmmo(AmmoType ammoType, int amount)
+    {
+        if(ammos.ContainsKey(ammoType))
+        {
+            ammos[ammoType] = amount;
+        }
+        else
+        {
+            ammos.Add(ammoType, amount);
+        }
+    }
+
     public void TakeDamage(float damage)
     {
         TakeDamageRpc(damage);

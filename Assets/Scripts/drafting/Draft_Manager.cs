@@ -145,14 +145,21 @@ public class Draft_Manager : NetworkBehaviour
                 int[] cardAsArr = CardToIntArray(card);
                 str += cardAsArr[0] + "." + cardAsArr[1] + "." + cardAsArr[2] + ",";
             }
-            str = str.Remove(str.Length - 1);
+            if(str.Length > 0){
+                str = str.Remove(str.Length - 1);
+            }
             str += "\n";
         }
-        str = str.Remove(str.Length - 1);
+        if(str.Length > 0){
+            str = str.Remove(str.Length - 1);
+        }
         return str;
     }
 
     private Dictionary<ulong, List<Draft_Card>> stateFromString(string str){
+        if(str.Length == 0){
+            return new Dictionary<ulong, List<Draft_Card>>();
+        }
         var state = new Dictionary<ulong, List<Draft_Card>>();
         var playerStates = str.Split('\n');
         foreach(var playerState in playerStates){

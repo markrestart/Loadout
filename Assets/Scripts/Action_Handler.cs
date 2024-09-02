@@ -72,6 +72,7 @@ public class Action_Handler : NetworkBehaviour
         if(Input.GetButtonDown("Ability")){
             if(activeAbility != null)
             {
+                //TODO: Some abilities may not need to be sent as an rpc(Like movement abilities)
                 ActivateAbilityRpc();
             }
         }
@@ -98,10 +99,21 @@ public class Action_Handler : NetworkBehaviour
         if(activeEquipment != null)
         {
             activeEquipment.Use(firePoint, playerManager, this, isNewPress);
+            SyncWeaponAfterUseRpc(activeEquipment.CurrentAmmo, playerManager.AmmoCount(activeEquipment.ammoType));
         }
     }
 
-    [Rpc(SendTo.Server)]
+    [Rpc(SendTo.Everyone)]
+    public void SyncWeaponAfterUseRpc(int currentAmmo, int playerAmmo)
+    {
+        if(activeEquipment != null)
+        {
+            activeEquipment.SetCurrentAmmo(currentAmmo);
+            playerManager.SetAmmo(activeEquipment.ammoType, playerAmmo);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
     public void ActivateAbilityRpc()
     {
         if(activeAbility != null)

@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 239785592}
   - component: {fileID: 239785594}
   - component: {fileID: 239785593}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -788,7 +788,7 @@ GameObject:
   - component: {fileID: 300667882}
   - component: {fileID: 300667884}
   - component: {fileID: 300667883}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -854,7 +854,7 @@ GameObject:
   - component: {fileID: 316104858}
   - component: {fileID: 316104860}
   - component: {fileID: 316104859}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1199,7 +1199,7 @@ GameObject:
   - component: {fileID: 571211336}
   - component: {fileID: 571211338}
   - component: {fileID: 571211337}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1379,7 +1379,7 @@ GameObject:
   - component: {fileID: 779674224}
   - component: {fileID: 779674226}
   - component: {fileID: 779674225}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2233,7 +2233,7 @@ GameObject:
   - component: {fileID: 1027544875}
   - component: {fileID: 1027544877}
   - component: {fileID: 1027544876}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2942,7 +2942,7 @@ GameObject:
   - component: {fileID: 1237994954}
   - component: {fileID: 1237994956}
   - component: {fileID: 1237994955}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3008,7 +3008,7 @@ GameObject:
   - component: {fileID: 1258882772}
   - component: {fileID: 1258882774}
   - component: {fileID: 1258882773}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3285,7 +3285,7 @@ GameObject:
   - component: {fileID: 1338281427}
   - component: {fileID: 1338281429}
   - component: {fileID: 1338281428}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Spawn (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

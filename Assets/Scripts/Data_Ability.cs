@@ -39,7 +39,6 @@ public class Data_Ability
             return;
         }
         lastActivationTime = Time.time;
-        Debug.Log("Activating " + abilityName);
         switch(action){
             case AbilityActions.Invisable:
                 playerManager.GoInvisable(values[0]);
