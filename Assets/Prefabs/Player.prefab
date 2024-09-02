@@ -1342,7 +1342,7 @@ GameObject:
   - component: {fileID: 3201110568841805468}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1599,7 +1599,6 @@ MonoBehaviour:
   weightCountText: {fileID: 7708815252615790599}
   playersCountText: {fileID: 4354649303546688898}
   abilitiesCountText: {fileID: 6270261699861876012}
-  draftManager: {fileID: 0}
   playerManager: {fileID: 4535204103476488398}
   defaultEquipment: {fileID: 11400000, guid: 0fcd5547e61771417ad407120cfda6d9, type: 2}
 --- !u!1 &5067832398372353923

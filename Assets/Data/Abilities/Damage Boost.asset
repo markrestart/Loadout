@@ -17,5 +17,5 @@ MonoBehaviour:
   action: 5
   values:
   - 5
-  - 50
+  - 1.5
   cooldown: 30

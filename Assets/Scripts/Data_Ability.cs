@@ -5,11 +5,13 @@ public class Data_Ability
 {
     public string abilityName;
     public string description;
-    public float cooldown;
+    private float cooldown;
+    public float Cooldown { get => cooldown * cooldownMultiplier; }
     private float lastActivationTime;
     private float[] values;
     private AbilityActions action;
     public float CooldownRemaining { get => cooldownRemaining(); }
+    private float cooldownMultiplier = 1;
 
     public Data_Ability(SO_Ability scriptableAbility){
         this.abilityName = scriptableAbility.abilityName;
@@ -21,15 +23,19 @@ public class Data_Ability
 
     private float cooldownRemaining(){
         var timeSinceLastActivation = Time.time - lastActivationTime;
-        if(timeSinceLastActivation < cooldown){
-            return cooldown - timeSinceLastActivation;
+        if(timeSinceLastActivation < Cooldown){
+            return Cooldown - timeSinceLastActivation;
         }
         return 0;
     }
 
+    public void SetCooldownMultiplier(float multiplier){
+        cooldownMultiplier = multiplier;
+    }
+
 //TODO: Make sure abilities are replicated
     public void Activate(Player_Manager playerManager){
-        if(Time.time - lastActivationTime < cooldown){
+        if(Time.time - lastActivationTime < Cooldown){
             return;
         }
         lastActivationTime = Time.time;
@@ -48,10 +54,10 @@ public class Data_Ability
                 playerManager.Shield(values[0], values[1]);
                 break;
             case AbilityActions.FireRateBoost:
-                //playerManager.FireRateBoost(values[0], values[1]);
+                playerManager.FireRateBoost(values[0], values[1]);
                 break;
             case AbilityActions.DamageBoost:
-                //playerManager.DamageBoost(values[0], values[1]);
+                playerManager.DamageBoost(values[0], values[1]);
                 break;
             case AbilityActions.Jump:
                 playerManager.AbilityJump(values[0]);

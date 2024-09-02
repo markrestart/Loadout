@@ -27,6 +27,7 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     {
         this.archetype = archetype;
         playerMaxHealth = archetype.health;
+        transform.localScale = archetype.hitboxSizeModifier;
     }
     public void AddAbility(Data_Ability ability)
     {
@@ -88,12 +89,12 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage)
     {
-        if(isShielded)
+        if(isShielded > 0)
         {
             shieldLimit -= damage;
             if(shieldLimit <= 0)
             {
-                isShielded = false;
+                isShielded = 0;
             }
             return;
         }
@@ -134,19 +135,43 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
         GetComponent<MeshRenderer>().enabled = true;
     }
 
-    private bool isShielded = false;
+    private int isShielded = 0;
     private float shieldLimit = 0;
     public void Shield(float time, float limit)
     {
-        isShielded = true;
-        shieldLimit = limit;
+        isShielded++;
+        shieldLimit += limit;
         StartCoroutine(ShieldTimer(time));
     }
 
     private IEnumerator ShieldTimer(float time)
     {
         yield return new WaitForSeconds(time);
-        isShielded = false;
+        isShielded--;
+    }
+
+    public void DamageBoost(float time, float multiplier)
+    {
+        GetComponent<Action_Handler>().DamageMultiplier *= multiplier;
+        StartCoroutine(DamageBoostTimer(time, multiplier));
+    }
+
+    private IEnumerator DamageBoostTimer(float time, float multiplier)
+    {
+        yield return new WaitForSeconds(time);
+        GetComponent<Action_Handler>().DamageMultiplier /= multiplier;
+    }
+
+    public void FireRateBoost(float time, float multiplier)
+    {
+        GetComponent<Action_Handler>().FireRateMultiplier *= multiplier;
+        StartCoroutine(FireRateBoostTimer(time, multiplier));
+    }
+
+    private IEnumerator FireRateBoostTimer(float time, float multiplier)
+    {
+        yield return new WaitForSeconds(time);
+        GetComponent<Action_Handler>().FireRateMultiplier /= multiplier;
     }
 
     public void AbilityJump(float force)
@@ -166,6 +191,10 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
 
         GetComponent<Action_Handler>().Ready();
         playerHealth = archetype != null ? archetype.health : 100;
+        GetComponent<Action_Handler>().AbilityCooldownMultiplier = archetype != null ? archetype.abilityCooldownModifier : 1;
+        foreach(Data_Equipment equipment in equipments){
+            equipment.setActivationRateMultiplier(1);
+        }
 
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -183,15 +212,7 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
     public void GoToSpawnPoint(){
         // Go to spawn point
         if(spawnPointsParent != null){
-            foreach(Transform spawnPoint in spawnPointsParent){
-                // shpere cast to check if another player is at the spawn point
-                if(Physics.SphereCast(spawnPoint.position, 3.0f, Vector3.up, out RaycastHit hit, 0.0f)){
-                    if(hit.transform != transform && hit.transform.GetComponent<Player_Manager>()){
-                        continue;
-                    }
-                }
-                GoToPosition(spawnPoint.position);
-            }
+            GoToPosition(spawnPointsParent.GetChild((int)NetworkManager.Singleton.LocalClientId).position);
         }
     }
 

@@ -49,6 +49,8 @@ public class Reserves_Controller : NetworkBehaviour
         if(card.EType == DraftCardType.Archetype){
             float totalCarryWeight = card.Archetype.carryWeight;
             float equipWeight = 0;
+            int equipAbilities = 0;
+            int maxAbilities = card.Archetype.abilitySlots;
             foreach(Transform child in reserveDisplay.transform){
                 Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
                 if(iCard.IsToggled && iCard.Card.EType == DraftCardType.Archetype){
@@ -58,11 +60,22 @@ public class Reserves_Controller : NetworkBehaviour
                     if(equipWeight > totalCarryWeight){
                         return false;
                     }
+                }else if(iCard.IsToggled && iCard.Card.EType == DraftCardType.Ability){
+                    equipAbilities++;
+                    if(equipAbilities >= maxAbilities){
+                        return false;
+                    }
                 }
             }
         }else if(card.EType == DraftCardType.Ability){
             int totalAbilities = 3;
             int equipAbilities = 0;
+            foreach(Transform child in reserveDisplay.transform){
+                Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
+                if(iCard.IsToggled && iCard.Card.EType == DraftCardType.Archetype){
+                    totalAbilities = iCard.Card.Archetype.abilitySlots;
+                }
+            }
             foreach(Transform child in reserveDisplay.transform){
                 Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
                 if(iCard.IsToggled && iCard.Card.EType == DraftCardType.Ability){
@@ -100,12 +113,14 @@ public class Reserves_Controller : NetworkBehaviour
         float weightCount = 0;
         int abilitiesCount = 0;
         float totalCarryWeight = 100;
+        int maxAbilities = 3;
         foreach(Transform child in reserveDisplay.transform){
             Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
             if(iCard.IsToggled){
                 if(iCard.Card.EType == DraftCardType.Archetype){
                     archetypeCount++;
                     totalCarryWeight = iCard.Card.Archetype.carryWeight;
+                    maxAbilities = iCard.Card.Archetype.abilitySlots;
                 }else if(iCard.Card.Weight > 0){
                     weightCount += iCard.Card.Weight;
                 }else if(iCard.Card.EType == DraftCardType.Ability){
@@ -115,7 +130,7 @@ public class Reserves_Controller : NetworkBehaviour
         }
         archetypeCountText.text =   $"{archetypeCount.ToString()}/1";
         weightCountText.text =      $"{weightCount.ToString()}/{totalCarryWeight.ToString()}";
-        abilitiesCountText.text =   $"{abilitiesCount.ToString()}/3";
+        abilitiesCountText.text =   $"{abilitiesCount.ToString()}/{maxAbilities.ToString()}";
     }
 
     public void RemoveFromSelected(Draft_Card card){
@@ -124,6 +139,8 @@ public class Reserves_Controller : NetworkBehaviour
         }
         float totalCarryWeight = 100;
         float equipWeight = 0;
+        int equipAbilities = 0;
+        int maxAbilities = 3;
         foreach(Transform child in reserveDisplay.transform){
             Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
             if(iCard.IsToggled && iCard.Card.Weight > 0){
@@ -131,6 +148,12 @@ public class Reserves_Controller : NetworkBehaviour
                 if(equipWeight > totalCarryWeight){
                     iCard.Deselect();
                     equipWeight -= iCard.Card.Weight;
+                }
+            }else if(iCard.IsToggled && iCard.Card.EType == DraftCardType.Ability){
+                equipAbilities++;
+                if(equipAbilities > maxAbilities){
+                    iCard.Deselect();
+                    equipAbilities--;
                 }
             }
         }

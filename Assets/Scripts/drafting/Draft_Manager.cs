@@ -246,17 +246,17 @@ public class Draft_Manager : NetworkBehaviour
     }
 
     List<Draft_Card> GenerateDraftCards(int numberOfCards){
-        //Generate 45% Weapons, 10% Armor, 15% Ammo, 20% Abilities, 10% Archetypes
+        //Generate 40% Weapons, 12% Armor, 12% Ammo, 22% Abilities, 14% Archetypes
         List<Draft_Card> draftCards = new List<Draft_Card>();
         for(int i = 0; i < numberOfCards; i++){
             float percent = (float)i/numberOfCards;
-            if(percent <= 0.25f){
+            if(percent <= 0.4f){
                 //Weapon
                 draftCards.Add(new Draft_Card(new Data_Equipment(WeaponPool[UnityEngine.Random.Range(0, WeaponPool.Count)])));
-            }else if(percent <= 0.30f){
+            }else if(percent <= 0.52f){
                 //Armor
                 draftCards.Add(new Draft_Card(ArmorPool[UnityEngine.Random.Range(0, ArmorPool.Count)]));
-            }else if(percent <= 0.45f){
+            }else if(percent <= 0.64f){
                 //Ammo TODO: Hardcoded ammo amounts should be replaced with a more dynamic system
                 var amount = 0;
                 var ammoType = AmmoPool[UnityEngine.Random.Range(0, AmmoPool.Count)];
@@ -278,7 +278,7 @@ public class Draft_Manager : NetworkBehaviour
                         break;
                 }
                 draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammoType, amount)));
-            }else if(percent <= 0.8f){
+            }else if(percent <= 0.86f){
                 //Ability
                 draftCards.Add(new Draft_Card(new Data_Ability(AbilityPool[UnityEngine.Random.Range(0, AbilityPool.Count)])));
             }else{

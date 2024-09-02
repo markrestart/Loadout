@@ -14,6 +14,24 @@ public class Action_Handler : NetworkBehaviour
     public Data_Equipment ActiveEquipment { get => activeEquipment; }
     private Data_Ability activeAbility;
     public Data_Ability ActiveAbility { get => activeAbility; }
+    private float damageMultiplier = 1;
+
+    public float DamageMultiplier { get => damageMultiplier; set => damageMultiplier = value; }
+    private float fireRateMultiplier = 1;
+    public float FireRateMultiplier { get => fireRateMultiplier; set {
+        fireRateMultiplier = value;
+        foreach(Data_Equipment equipment in playerManager.Equipments){
+            equipment.setActivationRateMultiplier(value);
+        }
+    } }
+    
+    private float abilityCooldownMultiplier = 1;
+    public float AbilityCooldownMultiplier { get => abilityCooldownMultiplier; set {
+        abilityCooldownMultiplier = value;
+        foreach(Data_Ability ability in playerManager.Abilities){
+            ability.SetCooldownMultiplier(value);
+        }
+     } }
 
     private void Awake()
     {
@@ -109,7 +127,7 @@ public class Action_Handler : NetworkBehaviour
     public void FireProjectileRpc(ProjectileType projectile, float damage)
     {
         var projectileObj = Instantiate(PrefabLibrary.instance.Projectiles[projectile], firePoint.position, firePoint.rotation);
-        projectileObj.GetComponent<Projectile>().SetDamage(damage);
+        projectileObj.GetComponent<Projectile>().SetDamage(damage * damageMultiplier);
         projectileObj.GetComponent<NetworkObject>().Spawn();
     }
 
@@ -120,7 +138,7 @@ public class Action_Handler : NetworkBehaviour
         if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
             //If the raycast hits something with a Damage_Handler, deal damage
             if(hit.collider.GetComponent<Damage_Handler>()){
-                hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage);
+                hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage * damageMultiplier);
             }
         }
     }
@@ -131,7 +149,7 @@ public class Action_Handler : NetworkBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.0f);
         foreach(Collider hitCollider in hitColliders){
             if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
-                hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage);
+                hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage * (playerManager.Archetype != null ? playerManager.Archetype.meleeModifier : 1));
             }
         }
     }

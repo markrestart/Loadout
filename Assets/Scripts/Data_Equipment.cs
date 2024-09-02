@@ -25,10 +25,15 @@ public class Data_Equipment
 
     private float lastActivationTime;
     private float lastReloadTime;
+    private float activationRateMultiplier = 1;
+
+    public void setActivationRateMultiplier(float multiplier){
+        activationRateMultiplier = multiplier;
+    }
 
         //Base use for weapons. this will handle most ranged weapons and melee weapons
     public void Use(Transform firePoint, Player_Manager playerManager, Action_Handler action_Handler, bool isNewPress) {
-        if(Time.time - lastActivationTime < activationRate){
+        if(Time.time - lastActivationTime < activationRate * activationRateMultiplier){
             return;
         }
         if(Time.time - lastReloadTime < reloadTime){
