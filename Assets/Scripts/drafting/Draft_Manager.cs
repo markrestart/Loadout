@@ -87,12 +87,11 @@ public class Draft_Manager : NetworkBehaviour
         }
     }
 
-    //TODO: This probaly needs to be refactored to specify the local player's objects
     [Rpc(SendTo.Everyone)]
-    void EndDraftRpc(){
+    void EndDraftRpc(ulong[] playersList){
         //Put all players into the equiping phase
         foreach(var reservesController in reservesControllers){
-            reservesController.Value.EnterEquipPhase(players.ToList());
+            reservesController.Value.EnterEquipPhase(playersList.ToList());
         }
 
         //Disable the draft manager
@@ -129,7 +128,7 @@ public class Draft_Manager : NetworkBehaviour
         //if all players have selected a card(based on ready state), move to the next round
         if(readyState.Values.All(x => x == true)){
             if(draftState[players[0]].Count == 0){
-                EndDraftRpc();
+                EndDraftRpc(players.ToArray());
             }else{
                 readyState = readyState.ToDictionary(x => x.Key, x => false);
                 RotateDraft();
@@ -143,7 +142,7 @@ public class Draft_Manager : NetworkBehaviour
         foreach(var player in state){
             str += player.Key + ":";
             foreach(var card in player.Value){
-                int[] cardAsArr = RealCardToIntArray(card);
+                int[] cardAsArr = CardToIntArray(card);
                 str += cardAsArr[0] + "." + cardAsArr[1] + "." + cardAsArr[2] + ",";
             }
             str = str.Remove(str.Length - 1);
@@ -202,34 +201,6 @@ public class Draft_Manager : NetworkBehaviour
     }
 
     public int[] CardToIntArray(Draft_Card card){
-        var arr = new int[3];
-        arr[0] = (int)card.EType;
-        switch(card.EType){
-            case DraftCardType.Equipment:
-                arr[1] = (int)WeaponPool.FindIndex(x => x.equipmentName == card.Equipment.equipmentName);
-                arr[2] = 0;
-                break;
-            case DraftCardType.Ability:
-                arr[1] = (int)AbilityPool.FindIndex(x => x.abilityName == card.Ability.abilityName);
-                arr[2] = 0;
-                break;
-            case DraftCardType.Archetype:
-                arr[1] = (int)ArchetypePool.FindIndex(x => x.archetypeName == card.Archetype.archetypeName);
-                arr[2] = 0;
-                break;
-            case DraftCardType.Ammo:
-                arr[1] = (int)card.AmmoType;
-                arr[2] = (int)card.AmmoAmount;
-                break;
-            case DraftCardType.Armor:
-                arr[1] = (int)card.Armor;
-                arr[2] = 0;
-                break;
-        }
-        return arr;
-    }
-
-    public int[] RealCardToIntArray(Draft_Card card){
         var arr = new int[3];
         arr[0] = (int)card.EType;
         switch(card.EType){

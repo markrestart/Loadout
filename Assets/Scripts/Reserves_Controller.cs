@@ -26,7 +26,12 @@ public class Reserves_Controller : NetworkBehaviour
     [SerializeField]
     private SO_Equipment defaultEquipment;
 
-    private Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
+    private static Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
+    private static List<Reserves_Controller> instances = new List<Reserves_Controller>();
+
+    private void Start() {
+        instances.Add(this);
+    }
 
     public List<Draft_Card> GetReserves(){
         return reserves;
@@ -150,34 +155,12 @@ public class Reserves_Controller : NetworkBehaviour
         return cardData.ToArray();
     }
 
-    public void EnterEquipPhase(List<ulong> numberOfPlayers)
+    public void EnterEquipPhase(List<ulong> playerIds)
     {
         //Sync the reserves
         if(IsServer){
             var reserveData = reserves.Select(x => Draft_Manager.Instance.CardToIntArray(x)).ToArray();
-            SyncReserveRPC(reserveDataToString(reserveData));
-        }
-
-        if(IsOwner){
-            //unready the player, free the mouse
-            transform.GetComponent<Player_Manager>().Unready();
-            //display the equip menu
-            equipMenu.SetActive(true);
-
-            //Remove all children from the reserve display
-            foreach(Transform child in reserveDisplay.transform){
-                Destroy(child.gameObject);
-            }
-            //display the reserves
-            foreach(var card in reserves){
-                var cardObj = Instantiate(reserveCardPrefab, reserveDisplay.transform);
-                cardObj.GetComponent<Reserve_Card_Manager>().Card = card;
-                cardObj.GetComponent<Reserve_Card_Manager>().ReservesController = this;
-            }
-
-            //display the player count
-            readyState = numberOfPlayers.ToDictionary(x => x, x => false);
-            playersCountText.text = $"0/{readyState.Count}";
+            SyncReserveRPC(reserveDataToString(reserveData), playerIds.ToArray());
         }
     }
 
@@ -220,27 +203,58 @@ public class Reserves_Controller : NetworkBehaviour
         }
 
         readyState[player] = true;
-        playersCountText.text = $"{readyState.Count(x => x.Value)}/{readyState.Count}";
+        foreach(var instance in instances){
+            instance.playersCountText.text = $"{readyState.Count(x => x.Value)}/{readyState.Count}";
+        }
 
         if(IsServer && readyState.All(x => x.Value)){
             StartRoundRpc();
         }
     }
 
-    //TODO: This needs to be refactored to specify the local player's object
     [Rpc(SendTo.Everyone)]
     public void StartRoundRpc(){
-        equipMenu.SetActive(false);
-        playerManager.Ready();
+        foreach(var instance in instances){
+            instance.StartRoundLocal();
+        }
+    }
+
+    public void StartRoundLocal(){
+        if(IsOwner){
+            equipMenu.SetActive(false);
+            playerManager.Ready();
+        }
     }
 
     [Rpc(SendTo.Everyone)]
-    public void SyncReserveRPC(string reserveData){
+    public void SyncReserveRPC(string reserveData, ulong[] playerIds){
         var reserveDataArr = reserveDataFromString(reserveData);
         reserves = new List<Draft_Card>();
         foreach(var cardData in reserveDataArr){
             var card = Draft_Manager.Instance.IntArrayToCard(cardData);
             reserves.Add(card);
+        }
+
+        if(IsOwner){
+            //unready the player, free the mouse
+            transform.GetComponent<Player_Manager>().Unready();
+            //display the equip menu
+            equipMenu.SetActive(true);
+
+            //Remove all children from the reserve display
+            foreach(Transform child in reserveDisplay.transform){
+                Destroy(child.gameObject);
+            }
+            //display the reserves
+            foreach(var card in reserves){
+                var cardObj = Instantiate(reserveCardPrefab, reserveDisplay.transform);
+                cardObj.GetComponent<Reserve_Card_Manager>().Card = card;
+                cardObj.GetComponent<Reserve_Card_Manager>().ReservesController = this;
+            }
+
+            //display the player count
+            readyState = playerIds.ToDictionary(x => x, x => false);
+            playersCountText.text = $"0/{readyState.Count}";
         }
     }
 }
