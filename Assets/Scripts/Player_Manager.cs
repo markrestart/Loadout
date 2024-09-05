@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Player_Manager : MonoBehaviour, ITakes_Damage
+public class Player_Manager : NetworkBehaviour, ITakes_Damage
 {
 
     [SerializeField]
@@ -95,12 +95,14 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
 
     public void TakeDamage(float damage)
     {
+        Debug.Log("Player took damage");
         TakeDamageRpc(damage);
     }
 
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage)
     {
+        Debug.Log("Player took damage rpc");
         if(isShielded > 0)
         {
             shieldLimit -= damage;
@@ -111,7 +113,7 @@ public class Player_Manager : MonoBehaviour, ITakes_Damage
             return;
         }
         playerHealth -= damage;
-        Debug.Log($"Player {NetworkManager.Singleton.LocalClientId} took damage: {damage}. Health: {playerHealth}");
+        Debug.Log($"Player {NetworkObject.OwnerClientId} took damage: {damage}. Health: {playerHealth}");
         if(playerHealth <= 0)
         {
             //Player is dead

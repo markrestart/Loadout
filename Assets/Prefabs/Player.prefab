@@ -1340,6 +1340,7 @@ GameObject:
   - component: {fileID: 5094391633314566208}
   - component: {fileID: 7550108670673083495}
   - component: {fileID: 3201110568841805468}
+  - component: {fileID: 4637623880095543513}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1475,7 +1476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3788265048
+  GlobalObjectIdHash: 3021594809
   InScenePlacedSourceGlobalObjectIdHash: 3021594809
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1601,6 +1602,18 @@ MonoBehaviour:
   abilitiesCountText: {fileID: 6270261699861876012}
   playerManager: {fileID: 4535204103476488398}
   defaultEquipment: {fileID: 11400000, guid: 0fcd5547e61771417ad407120cfda6d9, type: 2}
+--- !u!114 &4637623880095543513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4815540681180488003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43b0ac479832fd41095f3c4501bfee87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5067832398372353923
 GameObject:
   m_ObjectHideFlags: 0
