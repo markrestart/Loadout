@@ -14,6 +14,10 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     private List<Data_Equipment> equipments = new List<Data_Equipment>();
     [SerializeField]
     private Dictionary<AmmoType, int> ammos = new Dictionary<AmmoType, int>();
+    [SerializeField]
+    private MeshRenderer playerModel;
+    [SerializeField]
+    private List<GameObject> effects;
     private Transform spawnPointsParent;
 
     private float playerHealth;
@@ -139,20 +143,30 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
 
     public void GoInvisable(float time)
     {
-        GetComponent<MeshRenderer>().enabled = false;
+        if(!IsOwner){
+            playerModel.enabled = false;
+        }else{
+            effects[0].SetActive(true);
+        }
         StartCoroutine(InvisableTimer(time));
     }
 
     private IEnumerator InvisableTimer(float time)
     {
-        yield return new WaitForSeconds(time);
-        GetComponent<MeshRenderer>().enabled = true;
+        if(!IsOwner){
+            yield return new WaitForSeconds(time);
+            playerModel.enabled = true;
+        }else{
+            yield return new WaitForSeconds(time);
+            effects[0].SetActive(false);
+        }
     }
 
     private int isShielded = 0;
     private float shieldLimit = 0;
     public void Shield(float time, float limit)
     {
+        effects[3].SetActive(true);
         isShielded++;
         shieldLimit += limit;
         StartCoroutine(ShieldTimer(time));
@@ -162,10 +176,15 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     {
         yield return new WaitForSeconds(time);
         isShielded--;
+        if(isShielded == 0)
+        {
+            effects[3].SetActive(false);
+        }
     }
 
     public void DamageBoost(float time, float multiplier)
     {
+        effects[1].SetActive(true);
         GetComponent<Action_Handler>().DamageMultiplier *= multiplier;
         StartCoroutine(DamageBoostTimer(time, multiplier));
     }
@@ -174,10 +193,15 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     {
         yield return new WaitForSeconds(time);
         GetComponent<Action_Handler>().DamageMultiplier /= multiplier;
+        if(GetComponent<Action_Handler>().DamageMultiplier == 1)
+        {
+            effects[1].SetActive(false);
+        }
     }
 
     public void FireRateBoost(float time, float multiplier)
     {
+        effects[2].SetActive(true);
         GetComponent<Action_Handler>().FireRateMultiplier *= multiplier;
         StartCoroutine(FireRateBoostTimer(time, multiplier));
     }
@@ -186,6 +210,10 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     {
         yield return new WaitForSeconds(time);
         GetComponent<Action_Handler>().FireRateMultiplier /= multiplier;
+        if(GetComponent<Action_Handler>().FireRateMultiplier == 1)
+        {
+            effects[2].SetActive(false);
+        }
     }
 
     public void AbilityJump(float force)
@@ -196,6 +224,9 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
 
     private void Start() {
         spawnPointsParent = GameObject.Find("<SpawnPoints>").transform;
+        if(IsOwner){
+            playerModel.enabled = false;
+        }
     }
 
     public void Ready(){
