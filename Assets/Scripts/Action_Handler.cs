@@ -132,6 +132,7 @@ public class Action_Handler : NetworkBehaviour
         {
             weaponModels[i].SetActive(i == (int)playerManager.Equipments[equipmentIndex].equipmentModel);
         }
+        PlayEquipAnimation();
     }
 
     [Rpc(SendTo.Everyone)]
@@ -185,6 +186,15 @@ public class Action_Handler : NetworkBehaviour
         {
             var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
             animator.clip = animator.GetClip($"{animator.gameObject.name}Fire");
+            animator.Play();
+        }
+    }
+
+    private void PlayEquipAnimation(){
+        if(weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>() != null)
+        {
+            var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
+            animator.clip = animator.GetClip($"{animator.gameObject.name}Equip");
             animator.Play();
         }
     }
