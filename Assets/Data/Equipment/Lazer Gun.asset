@@ -20,7 +20,7 @@ MonoBehaviour:
   reloadTime: 2
   damage: 5
   isHitscan: 1
-  projectile: 0
+  projectile: 4
   isAutomatic: 1
   activationRate: 0.05
   weight: 25

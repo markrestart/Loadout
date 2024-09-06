@@ -14,6 +14,8 @@ public class Player_Movement_Controller : NetworkBehaviour
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
     private Player_Manager playerManager;
+    [SerializeField]
+    private Animator animator;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -92,6 +94,13 @@ public class Player_Movement_Controller : NetworkBehaviour
             rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
             playerLooking.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+        }
+
+        // Animation
+        if(animator != null){
+            Vector3 horizontalMovement = new Vector3(moveDirection.x, 0, moveDirection.z);
+            animator.SetFloat("H_Speed", horizontalMovement.magnitude);
+            animator.SetBool("IsGrounded", characterController.isGrounded);
         }
     }
 }
