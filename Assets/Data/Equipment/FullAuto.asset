@@ -15,6 +15,7 @@ MonoBehaviour:
   equipmentName: Automatic Rifle
   description: point and shoot
   equipmentType: 0
+  equipmentModel: 2
   ammoType: 2
   magazineSize: 60
   reloadTime: 1

@@ -7,6 +7,7 @@ public class SO_Equipment : ScriptableObject {
     public string description = "This is a description of the equipment.";
 
     public EquipmentType equipmentType = EquipmentType.RangedWeapon;
+    public EquipmentModel equipmentModel;
     public AmmoType ammoType = AmmoType.NA;
     public int magazineSize = 0;
     private int currentAmmo = 0;
@@ -96,4 +97,14 @@ public enum ProjectileType {
     Granade,
     Rocket,
     Arrow
+}
+
+public enum EquipmentModel {
+    Base,
+    Pistol,
+    Rifle,
+    Sword,
+    RocketLauncher,
+    Crossbow,
+    LazerGun,
 }

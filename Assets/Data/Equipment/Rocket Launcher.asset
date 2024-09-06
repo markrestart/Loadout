@@ -15,6 +15,7 @@ MonoBehaviour:
   equipmentName: Rocket Launcher
   description: Two one hit kill rockets. Make them count.
   equipmentType: 0
+  equipmentModel: 4
   ammoType: 4
   magazineSize: 2
   reloadTime: 5

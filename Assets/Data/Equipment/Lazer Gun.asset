@@ -15,6 +15,7 @@ MonoBehaviour:
   equipmentName: Lazer Gun
   description: point and shoot
   equipmentType: 0
+  equipmentModel: 6
   ammoType: 5
   magazineSize: 150
   reloadTime: 2

@@ -15,6 +15,7 @@ MonoBehaviour:
   equipmentName: Sword
   description: Swish swich. Melee
   equipmentType: 1
+  equipmentModel: 3
   ammoType: 0
   magazineSize: 0
   reloadTime: 0

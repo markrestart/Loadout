@@ -9,7 +9,7 @@ public class Data_Equipment
 {
     public string equipmentName;
     public string description;
-
+    public EquipmentModel equipmentModel;
     public EquipmentType equipmentType;
     public AmmoType ammoType;
     public int magazineSize;
@@ -44,6 +44,9 @@ public class Data_Equipment
         }
         if(equipmentType == EquipmentType.RangedWeapon && currentAmmo <= 0){
             Reload(playerManager);
+            if(reloadTime > 0){
+                action_Handler.ReloadRpc();
+            }
             return;
         }
         lastActivationTime = Time.time;
@@ -98,5 +101,6 @@ public class Data_Equipment
         this.weight = scriptableEquipment.weight;
         this.lastActivationTime = 0.0f;
         this.lastReloadTime = 0.0f;
+        this.equipmentModel = scriptableEquipment.equipmentModel;
     }
 }

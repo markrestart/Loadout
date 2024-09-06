@@ -15,6 +15,7 @@ MonoBehaviour:
   equipmentName: Cross Bow
   description: Slow, high damage, projectile weapon. Comes with 10 arrows
   equipmentType: 0
+  equipmentModel: 5
   ammoType: 1
   magazineSize: 10
   reloadTime: 0

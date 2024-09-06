@@ -15,6 +15,7 @@ MonoBehaviour:
   equipmentName: Pistol
   description: pow pow. 12 bullets.
   equipmentType: 0
+  equipmentModel: 1
   ammoType: 2
   magazineSize: 12
   reloadTime: 2

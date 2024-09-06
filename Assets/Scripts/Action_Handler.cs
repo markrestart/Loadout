@@ -14,6 +14,8 @@ public class Action_Handler : NetworkBehaviour
     public Data_Equipment ActiveEquipment { get => activeEquipment; }
     private Data_Ability activeAbility;
     public Data_Ability ActiveAbility { get => activeAbility; }
+    [SerializeField]
+    public List<GameObject> weaponModels = new List<GameObject>();
     private float damageMultiplier = 1;
 
     public float DamageMultiplier { get => damageMultiplier; set => damageMultiplier = value; }
@@ -126,6 +128,10 @@ public class Action_Handler : NetworkBehaviour
     public void SyncEquipmentRpc(ushort equipmentIndex)
     {
         activeEquipment = playerManager.Equipments[equipmentIndex];
+        for(int i = 0; i < weaponModels.Count; i++)
+        {
+            weaponModels[i].SetActive(i == (int)playerManager.Equipments[equipmentIndex].equipmentModel);
+        }
     }
 
     [Rpc(SendTo.Everyone)]
@@ -141,6 +147,8 @@ public class Action_Handler : NetworkBehaviour
         var projectileObj = Instantiate(PrefabLibrary.instance.Projectiles[projectile], firePoint.position, firePoint.rotation);
         projectileObj.GetComponent<Projectile>().SetDamage(damage * damageMultiplier);
         projectileObj.GetComponent<NetworkObject>().Spawn();
+
+        PlayFireAnimationRpc();
     }
 
     [Rpc(SendTo.Server)]
@@ -153,6 +161,8 @@ public class Action_Handler : NetworkBehaviour
                 hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage * damageMultiplier);
             }
         }
+
+        PlayFireAnimationRpc();
     }
 
     [Rpc(SendTo.Server)]
@@ -163,6 +173,29 @@ public class Action_Handler : NetworkBehaviour
             if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
                 hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage * (playerManager.Archetype != null ? playerManager.Archetype.meleeModifier : 1));
             }
+        }
+
+        PlayFireAnimationRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayFireAnimationRpc()
+    {
+        if(weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>() != null)
+        {
+            var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
+            animator.clip = animator.GetClip($"{animator.gameObject.name}Fire");
+            animator.Play();
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void ReloadRpc(){
+        if(weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>() != null)
+        {
+            var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
+            animator.clip = animator.GetClip($"{animator.gameObject.name}Reload");
+            animator.Play();
         }
     }
 }
