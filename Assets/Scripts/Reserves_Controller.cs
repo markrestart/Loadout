@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.VisualScripting;
 
 public class Reserves_Controller : NetworkBehaviour
 {
@@ -28,6 +29,7 @@ public class Reserves_Controller : NetworkBehaviour
 
     private static Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
     private static List<Reserves_Controller> instances = new List<Reserves_Controller>();
+    public static List<Reserves_Controller> Instances { get => instances; }
 
     private void Start() {
         instances.Add(this);
@@ -202,6 +204,19 @@ public class Reserves_Controller : NetworkBehaviour
         }
 
         EquipAndReadyRpc(NetworkManager.LocalClientId, reserveDataToString(equipedCards.Select(x => Draft_Manager.Instance.CardToIntArray(x)).ToArray()));
+    }
+
+    public void ResetRound(bool isSurvivor){
+        playerManager.Unready();
+        if(playerManager.Archetype != null){
+            AddToReserves(new Draft_Card(playerManager.Archetype));
+        }
+        if(isSurvivor){
+            foreach(var equipment in playerManager.Equipments){
+                AddToReserves(new Draft_Card(equipment));
+            }
+        }
+        playerManager.ClearLoadout();
     }
 
     [Rpc(SendTo.Everyone)]

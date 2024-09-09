@@ -145,8 +145,10 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void FireProjectileRpc(ProjectileType projectile, float damage)
     {
+        var sourceID = playerManager.NetworkObject.NetworkObjectId;
         var projectileObj = Instantiate(PrefabLibrary.instance.Projectiles[projectile], firePoint.position, firePoint.rotation);
         projectileObj.GetComponent<Projectile>().SetDamage(damage * damageMultiplier);
+        projectileObj.GetComponent<Projectile>().SetSourceID(sourceID);
         projectileObj.GetComponent<NetworkObject>().Spawn();
 
         PlayFireAnimationRpc();
@@ -155,11 +157,12 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void FireHitscanRpc(float damage)
     {
+        var sourceID = playerManager.NetworkObject.NetworkObjectId;
         RaycastHit hit;
         if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
             //If the raycast hits something with a Damage_Handler, deal damage
             if(hit.collider.GetComponent<Damage_Handler>()){
-                hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage * damageMultiplier);
+                hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage * damageMultiplier, sourceID);
             }
         }
 
@@ -169,10 +172,11 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void MeleeAttackRpc(float damage)
     {
+        var sourceID = playerManager.NetworkObject.NetworkObjectId;
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.0f);
         foreach(Collider hitCollider in hitColliders){
             if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
-                hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage * (playerManager.Archetype != null ? playerManager.Archetype.meleeModifier : 1));
+                hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage * (playerManager.Archetype != null ? playerManager.Archetype.meleeModifier : 1), sourceID);
             }
         }
 

@@ -10,9 +10,8 @@ public class Dummy_Manager : NetworkBehaviour, ITakes_Damage
     // UI text to display damage taken
     [SerializeField]
     private TMPro.TextMeshProUGUI damageText;
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, ulong sourceID)
     {
-        Debug.Log("Dummy Damage: " + damage);
         TakeDamageRpc(damage);
     }
 

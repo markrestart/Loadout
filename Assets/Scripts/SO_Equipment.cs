@@ -24,39 +24,8 @@ public class SO_Equipment : ScriptableObject {
     private float lastReloadTime = 0.0f;
     private Player_Manager playerManager;
 
-    //Base use for weapons. this will handle most ranged weapons and melee weapons
-    public void Use(Transform firePoint, bool isNewPress) {
-        if(Time.time - lastActivationTime < activationRate){
-            return;
-        }
-        if(Time.time - lastReloadTime < reloadTime){
-            return;
-        } 
-        if(!isAutomatic && !isNewPress){
-            return;
-        }
-        if(currentAmmo <= 0){
-            Reload();
-            return;
-        }
-        lastActivationTime = Time.time;
-        currentAmmo--;
-        if(isHitscan){
-            //Spawn hitscan projectile
-            RaycastHit hit;
-            if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
-                //If the raycast hits something with a Damage_Handler, deal damage
-                if(hit.collider.GetComponent<Damage_Handler>()){
-                    hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage);
-                }
-            }
-        }else{
-            //Spawn projectile TODO: Have a projectile manager to grab the prefab from so this can be networked
-            //GameObject newProjectile = Instantiate(projectile, firePoint.position, firePoint.rotation);
-            //newProjectile.GetComponent<Rigidbody>().AddForce(firePoint.forward * 1000);
-        }
-    }
-
+    //Use was removed from this class. I think all the functions can be removed.
+    
     public void Ready(Player_Manager player) {
         lastActivationTime = Time.time;
         lastReloadTime = Time.time;

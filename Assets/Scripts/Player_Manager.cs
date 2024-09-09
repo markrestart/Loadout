@@ -15,7 +15,9 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     [SerializeField]
     private Dictionary<AmmoType, int> ammos = new Dictionary<AmmoType, int>();
     [SerializeField]
-    private MeshRenderer playerModel;
+    private GameObject playerModel;
+    [SerializeField]
+    private GameObject playerWeaponModel;
     [SerializeField]
     private List<GameObject> effects;
     private Transform spawnPointsParent;
@@ -27,6 +29,17 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     public List<Data_Ability> Abilities { get => abilities; }
     public List<Data_Equipment> Equipments { get => equipments; }
     public Data_Archetype Archetype { get => archetype; }
+
+    public void ClearLoadout(){
+        archetype = null;
+        abilities.Clear();
+        equipments.Clear();
+        ammos.Clear();
+
+        playerMaxHealth = 100;
+        transform.localScale = Vector3.one;
+        playerWeaponModel.SetActive(true);
+    }
     public void SetArchetype(Data_Archetype archetype)
     {
         this.archetype = archetype;
@@ -97,16 +110,14 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         }
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, ulong sourceID)
     {
-        Debug.Log("Player took damage");
-        TakeDamageRpc(damage);
+        TakeDamageRpc(damage, sourceID);
     }
 
     [Rpc(SendTo.Everyone)]
-    public void TakeDamageRpc(float damage)
+    public void TakeDamageRpc(float damage, ulong sourceID) 
     {
-        Debug.Log("Player took damage rpc");
         if(isShielded > 0)
         {
             shieldLimit -= damage;
@@ -116,12 +127,18 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             }
             return;
         }
+        Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > playerHealth ? playerHealth + 20 : damage);
+        
         playerHealth -= damage;
-        Debug.Log($"Player {NetworkObject.OwnerClientId} took damage: {damage}. Health: {playerHealth}");
         if(playerHealth <= 0)
         {
             //Player is dead
             Debug.Log("Player is dead");
+            Rounds_Manager.Instance.PlayerDeath(NetworkManager.Singleton.LocalClientId);
+            //TODO: Handle player as spectating better
+            playerModel.SetActive(false);
+            transform.localScale = new Vector3(.01f, .5f, .01f);
+            playerWeaponModel.SetActive(false);
         }
     }
 
@@ -144,7 +161,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     public void GoInvisable(float time)
     {
         if(!IsOwner){
-            playerModel.enabled = false;
+            playerModel.SetActive(false);
         }else{
             effects[0].SetActive(true);
         }
@@ -155,7 +172,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     {
         if(!IsOwner){
             yield return new WaitForSeconds(time);
-            playerModel.enabled = true;
+            playerModel.SetActive(true);
         }else{
             yield return new WaitForSeconds(time);
             effects[0].SetActive(false);
@@ -225,7 +242,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     private void Start() {
         spawnPointsParent = GameObject.Find("<SpawnPoints>").transform;
         if(IsOwner){
-            playerModel.enabled = false;
+            playerModel.SetActive(false);
         }
     }
 

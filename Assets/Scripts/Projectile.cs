@@ -5,6 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     private float damage;
+    private ulong sourceID;
     [SerializeField]
     private float timeToLive = 5.0f;
     [SerializeField]
@@ -15,6 +16,11 @@ public class Projectile : MonoBehaviour
         this.damage = damage;
     }
 
+    public void SetSourceID(ulong sourceID)
+    {
+        this.sourceID = sourceID;
+    }
+
     private void Start()
     {
         GetComponent<Rigidbody>().velocity = transform.forward * speed;
@@ -22,7 +28,7 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.GetComponent<Damage_Handler>()){
-            other.gameObject.GetComponent<Damage_Handler>().TakeDamage(damage);
+            other.gameObject.GetComponent<Damage_Handler>().TakeDamage(damage, sourceID);
         }
         Destroy(gameObject);
     }
