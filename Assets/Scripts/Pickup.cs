@@ -8,6 +8,10 @@ public class Pickup : MonoBehaviour
 {
     private float points;
     private Dictionary<ulong, float> playersContactStartTimes = new Dictionary<ulong, float>();
+    [SerializeField]
+    private MeshRenderer meshRenderer;
+    [SerializeField]
+    private Collider triggerCollider;
 
     // Update is called once per frame
     void Update()
@@ -15,8 +19,8 @@ public class Pickup : MonoBehaviour
         bool wasPickedUp = points <= 0;
         points += Time.deltaTime;
         if(wasPickedUp && points > 0){
-            GetComponent<MeshRenderer>().enabled = true;
-            GetComponent<Collider>().enabled = true;
+            meshRenderer.enabled = true;
+            triggerCollider.enabled = true;
         }
 
         ulong bestPlayerID = 999;
@@ -49,7 +53,7 @@ public class Pickup : MonoBehaviour
     private void DoPickup(ulong playerID){
         Rounds_Manager.Instance.AddScoreRpc(playerID, points);
         points = Random.Range(-25, -10);
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<Collider>().enabled = false;
+        meshRenderer.enabled = false;
+        triggerCollider.enabled = false;
     }
 }
