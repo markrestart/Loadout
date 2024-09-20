@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Pickup : MonoBehaviour
+public class Pickup : NetworkBehaviour
 {
     private float points;
     private Dictionary<ulong, float> playersContactStartTimes = new Dictionary<ulong, float>();
@@ -16,6 +16,9 @@ public class Pickup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!Rounds_Manager.Instance.RoundStarted){
+            return;
+        }
         bool wasPickedUp = points <= 0;
         points += Time.deltaTime;
         if(wasPickedUp && points > 0){
@@ -39,20 +42,34 @@ public class Pickup : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
+        if(!Rounds_Manager.Instance.RoundStarted){
+            return;
+        }
         if(other.gameObject.GetComponent<Player_Manager>()){
             playersContactStartTimes.Add(other.gameObject.GetComponent<NetworkObject>().OwnerClientId, Time.time);
         }
     }
 
     private void OnTriggerExit(Collider other) {
+        if(!Rounds_Manager.Instance.RoundStarted){
+            return;
+        }
         if(other.gameObject.GetComponent<Player_Manager>()){
             playersContactStartTimes.Remove(other.gameObject.GetComponent<NetworkObject>().OwnerClientId);
         }
     }
 
     private void DoPickup(ulong playerID){
+        if(!IsServer){
+            return;
+        }
         Rounds_Manager.Instance.AddScoreRpc(playerID, points);
-        points = Random.Range(-25, -10);
+        SetPickupTimerRpc(Random.Range(-25, -10));
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void SetPickupTimerRpc(float points){
+        this.points = points;
         meshRenderer.enabled = false;
         triggerCollider.enabled = false;
     }

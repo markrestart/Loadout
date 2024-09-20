@@ -43,14 +43,14 @@ public class Action_Handler : NetworkBehaviour
     // Start is called before the first frame update
     public void Ready()
     {
-        activeEquipment = playerManager.Equipments.FirstOrDefault();
-        activeAbility = playerManager.Abilities.FirstOrDefault();
+        SyncAbilityRpc(0);
+        SyncEquipmentRpc(0);
     }
 
     public void Unready()
     {
-        activeEquipment = null;
-        activeAbility = null;
+        SyncAbilityRpc(999);
+        SyncEquipmentRpc(999);
     }
 
     // Update is called once per frame
@@ -127,6 +127,12 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     public void SyncEquipmentRpc(ushort equipmentIndex)
     {
+        if(playerManager.Equipments.Count == 0 || equipmentIndex == 999)
+        {
+            activeEquipment = null;
+            return;
+        }
+
         activeEquipment = playerManager.Equipments[equipmentIndex];
         for(int i = 0; i < weaponModels.Count; i++)
         {
@@ -138,6 +144,12 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     public void SyncAbilityRpc(ushort abilityIndex)
     {
+        if(playerManager.Abilities.Count == 0 || abilityIndex == 999)
+        {
+            activeAbility = null;
+            return;
+        }
+        
         activeAbility = playerManager.Abilities[abilityIndex];
     }
 
@@ -145,7 +157,7 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void FireProjectileRpc(ProjectileType projectile, float damage)
     {
-        var sourceID = playerManager.NetworkObject.NetworkObjectId;
+        var sourceID = playerManager.NetworkObject.OwnerClientId;
         var projectileObj = Instantiate(PrefabLibrary.instance.Projectiles[projectile], firePoint.position, firePoint.rotation);
         projectileObj.GetComponent<Projectile>().SetDamage(damage * damageMultiplier);
         projectileObj.GetComponent<Projectile>().SetSourceID(sourceID);
@@ -157,7 +169,7 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void FireHitscanRpc(float damage)
     {
-        var sourceID = playerManager.NetworkObject.NetworkObjectId;
+        var sourceID = playerManager.NetworkObject.OwnerClientId;
         RaycastHit hit;
         if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
             //If the raycast hits something with a Damage_Handler, deal damage
@@ -172,7 +184,7 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void MeleeAttackRpc(float damage)
     {
-        var sourceID = playerManager.NetworkObject.NetworkObjectId;
+        var sourceID = playerManager.NetworkObject.OwnerClientId;
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.0f);
         foreach(Collider hitCollider in hitColliders){
             if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){

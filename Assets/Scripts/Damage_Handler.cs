@@ -8,7 +8,6 @@ public class Damage_Handler : MonoBehaviour
     private ITakes_Damage damageTaker;
     public void TakeDamage(float damage, ulong sourceID)
     {
-        Debug.Log("Damage Taken: " + damage);
         damageTaker.TakeDamage(damage, sourceID);
     }
     private void Start() {

@@ -55,7 +55,6 @@ public class Draft_Manager : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     public void AddPlayerRpc(ulong clientId){
-        Debug.Log("Adding player: " + clientId);
         players.Add(clientId);
         readyState.Add(clientId, false);
         //Find the reserves controller for the player
@@ -75,6 +74,7 @@ public class Draft_Manager : NetworkBehaviour
 
     public void BeginDraft(){
         if(IsServer){
+            RequestNamesRpc();
             var draftCards = GenerateDraftCards(players.Count * 15);
             draftCards = Shuffler.Shuffle(draftCards);
             for(int i = 0; i < players.Count; i++){
@@ -85,6 +85,11 @@ public class Draft_Manager : NetworkBehaviour
             //Display the draft cards
             SendStateAndDisplayDraftRpc(stateToString(draftState));
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void RequestNamesRpc(){
+        Rounds_Manager.Instance.RegisterNameRpc(NetworkManager.Singleton.LocalClientId, ConnectionUI_Manager.GetScreenName());
     }
 
     [Rpc(SendTo.Everyone)]

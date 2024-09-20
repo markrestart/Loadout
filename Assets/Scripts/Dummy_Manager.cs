@@ -18,7 +18,6 @@ public class Dummy_Manager : NetworkBehaviour, ITakes_Damage
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage)
     {
-        Debug.Log("Dummy Damage rpc: " + damage);
         damageTaken += damage;
         damageText.text = $"+{damage} = {damageTaken}";
     }

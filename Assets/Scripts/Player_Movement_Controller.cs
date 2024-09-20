@@ -99,8 +99,15 @@ public class Player_Movement_Controller : NetworkBehaviour
         // Animation
         if(animator != null){
             Vector3 horizontalMovement = new Vector3(moveDirection.x, 0, moveDirection.z);
-            animator.SetFloat("H_Speed", horizontalMovement.magnitude);
-            animator.SetBool("IsGrounded", characterController.isGrounded);
+            SyncAnimRpc(horizontalMovement.magnitude, characterController.isGrounded);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void SyncAnimRpc(float hSpeed, bool isGrounded){
+        if(animator != null){
+            animator.SetFloat("H_Speed", hSpeed);
+            animator.SetBool("IsGrounded", isGrounded);
         }
     }
 }

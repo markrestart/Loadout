@@ -127,17 +127,17 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             }
             return;
         }
-        Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > playerHealth ? playerHealth + 20 : damage);
+        if(IsServer){
+            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > playerHealth ? playerHealth + 20 : damage);
+        }
         
         playerHealth -= damage;
         if(playerHealth <= 0)
         {
             //Player is dead
-            Debug.Log("Player is dead");
             Rounds_Manager.Instance.PlayerDeath(NetworkManager.Singleton.LocalClientId);
             //TODO: Handle player as spectating better
             playerModel.SetActive(false);
-            transform.localScale = new Vector3(.01f, .5f, .01f);
             playerWeaponModel.SetActive(false);
         }
     }
@@ -251,18 +251,23 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
 
         GetComponent<PlayerUI_Manager>().SetInGameUIActive(true);
 
-        GetComponent<Action_Handler>().Ready();
-        playerHealth = archetype != null ? archetype.health : 100;
-        GetComponent<Action_Handler>().AbilityCooldownMultiplier = archetype != null ? archetype.abilityCooldownModifier : 1;
-        foreach(Data_Equipment equipment in equipments){
-            equipment.setActivationRateMultiplier(1);
-        }
+        ReadyRpc();
 
         // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
         GoToSpawnPoint();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void ReadyRpc(){
+        playerHealth = archetype != null ? archetype.health : 100;
+        GetComponent<Action_Handler>().Ready();
+        GetComponent<Action_Handler>().AbilityCooldownMultiplier = archetype != null ? archetype.abilityCooldownModifier : 1;
+        foreach(Data_Equipment equipment in equipments){
+        equipment.setActivationRateMultiplier(1);
+        }
     }
 
     public void GoToPosition(Vector3 position){

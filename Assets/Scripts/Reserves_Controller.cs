@@ -260,6 +260,7 @@ public class Reserves_Controller : NetworkBehaviour
         foreach(var instance in instances){
             instance.StartRoundLocal();
         }
+        Rounds_Manager.Instance.StartRound();
     }
 
     public void StartRoundLocal(){
