@@ -44,6 +44,18 @@ public class Draft_Card
         return !(a == b);
     }
 
+    public override bool Equals(object obj){
+        if(obj == null || GetType() != obj.GetType()){
+            return false;
+        }
+        Draft_Card other = (Draft_Card)obj;
+        return this == other;
+    }
+
+    public override int GetHashCode(){
+        return base.GetHashCode();
+    }
+
 
     public Draft_Card(Data_Equipment equipment){
         this.type = DraftCardType.Equipment;

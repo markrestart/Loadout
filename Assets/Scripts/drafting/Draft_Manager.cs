@@ -45,6 +45,13 @@ public class Draft_Manager : NetworkBehaviour
         }
     }
 
+    private bool autoDraft = false;
+    void Update(){
+        if(Input.GetKeyDown(KeyCode.F12)){
+            autoDraft = !autoDraft;
+        }
+    }
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
@@ -209,6 +216,11 @@ public class Draft_Manager : NetworkBehaviour
             }
             cardManagers[i].gameObject.SetActive(true);
             cardManagers[i].SetCard(draftState[NetworkManager.Singleton.LocalClientId][i]);
+        }
+
+        //Testing utilty code
+        if(autoDraft){
+            SelectCard(draftState[NetworkManager.Singleton.LocalClientId][0]);
         }
     }
 

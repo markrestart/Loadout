@@ -207,6 +207,7 @@ public class Reserves_Controller : NetworkBehaviour
     }
 
     public void ResetRound(bool isSurvivor){
+        Debug.Log($"Resetting round for {NetworkManager.LocalClientId}, isSurvivor: {isSurvivor}");
         playerManager.Unready();
         if(playerManager.Archetype != null){
             AddToReserves(new Draft_Card(playerManager.Archetype));
@@ -257,10 +258,10 @@ public class Reserves_Controller : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     public void StartRoundRpc(){
+        Rounds_Manager.Instance.StartRound();
         foreach(var instance in instances){
             instance.StartRoundLocal();
         }
-        Rounds_Manager.Instance.StartRound();
     }
 
     public void StartRoundLocal(){

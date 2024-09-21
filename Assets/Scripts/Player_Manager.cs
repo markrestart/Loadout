@@ -136,9 +136,20 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         {
             //Player is dead
             Rounds_Manager.Instance.PlayerDeath(NetworkManager.Singleton.LocalClientId);
-            //TODO: Handle player as spectating better
-            playerModel.SetActive(false);
-            playerWeaponModel.SetActive(false);
+            SetIsSpecating(true);
+        }
+    }
+
+    public void SetIsSpecating(bool isSpecating)
+    {
+        isReady = !isSpecating;
+        playerModel.SetActive(!isSpecating);
+        playerWeaponModel.SetActive(!isSpecating);
+        if(IsOwner){
+            GetComponent<PlayerUI_Manager>().SetInGameUIActive(!isSpecating);
+        }
+        if(isSpecating){
+            GoToPosition(new Vector3(0, 22, 0));
         }
     }
 
@@ -262,6 +273,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
 
     [Rpc(SendTo.Everyone)]
     public void ReadyRpc(){
+        SetIsSpecating(false);
         playerHealth = archetype != null ? archetype.health : 100;
         GetComponent<Action_Handler>().Ready();
         GetComponent<Action_Handler>().AbilityCooldownMultiplier = archetype != null ? archetype.abilityCooldownModifier : 1;

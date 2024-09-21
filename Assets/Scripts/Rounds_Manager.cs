@@ -21,6 +21,9 @@ public class Rounds_Manager : NetworkBehaviour
     private GameObject quitGameButton;
     private bool roundStarted = false;
     public bool RoundStarted { get => roundStarted; }
+    public Dictionary<ulong, float> PlayerScores { get => playerScores; }
+    public Dictionary<ulong, bool> PlayersAlive { get => playersAlive; }
+    public Dictionary<ulong, string> PlayerNames { get => playerNames; }
 
     // Start is called before the first frame update
     void Start()
@@ -36,29 +39,42 @@ public class Rounds_Manager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     public void RegisterNameRpc(ulong playerID, string playerName){
         playerNames[playerID] = playerName;
-        Debug.Log($"Player {playerID} registered as {playerName}");
+        playerScores[playerID] = 0;
+        playersAlive[playerID] = true;
     }
 
     public void PlayerDeath(ulong playerID){
         playersAlive[playerID] = false;
         if(IsServer){
-        AddScoreRpc(playerID, playersAlive.Aggregate(0, (acc, player) => acc + (player.Value ? 1 : 0)) * 25);
-
-        bool allPlayersDead = true;
-        int alivePlayers = 0;
-        foreach(bool isAlive in playersAlive.Values){
-            if(isAlive){
-                alivePlayers++;
-                if(alivePlayers > 1){
-                    allPlayersDead = false;
-                    break;
+            bool allPlayersDead = true;
+            int alivePlayers = 0;
+            foreach(bool isAlive in playersAlive.Values){
+                Debug.Log(isAlive);
+                if(isAlive){
+                    alivePlayers++;
+                    if(alivePlayers > 1){
+                        allPlayersDead = false;
+                    }
                 }
+                Debug.Log(alivePlayers);
             }
-        }
-        if(allPlayersDead && IsServer){
-            AddScoreRpc(playersAlive.First(player => player.Value).Key, 25);
-            EndroundRpc();
-        }
+
+            AddScoreRpc(playerID, playersAlive.Count - alivePlayers * 25);
+
+            //TODO: Can be optimized to check the survivor while checking if all players are dead
+            if(allPlayersDead && IsServer){
+                ulong survivor = 999;
+                foreach(ulong ID in playersAlive.Keys){
+                    if(playersAlive[ID]){
+                        survivor = ID;
+                        break;
+                    }
+                }
+                if(survivor != 999){
+                    AddScoreRpc(survivor, 25);
+                }
+                EndroundRpc();
+            }
         }
     }
 
@@ -102,10 +118,7 @@ public class Rounds_Manager : NetworkBehaviour
     public void StartRound(){
         roundStarted = true;
         currentRound++;
-        foreach(ulong playerID in playersAlive.Keys){
-            playersAlive[playerID] = true;
-            playerScores[playerID] = 0;
-        }
+        playersAlive = playersAlive.ToDictionary(entry => entry.Key, entry => true);
     }
 
     [Rpc(SendTo.Everyone)]
