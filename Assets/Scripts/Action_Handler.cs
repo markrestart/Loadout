@@ -49,8 +49,8 @@ public class Action_Handler : NetworkBehaviour
 
     public void Unready()
     {
-        SyncAbilityRpc(999);
-        SyncEquipmentRpc(999);
+        SyncAbilityRpc(CONSTANTS.NULL_ID);
+        SyncEquipmentRpc(CONSTANTS.NULL_ID);
     }
 
     // Update is called once per frame
@@ -127,7 +127,7 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     public void SyncEquipmentRpc(ushort equipmentIndex)
     {
-        if(playerManager.Equipments.Count == 0 || equipmentIndex == 999)
+        if(playerManager.Equipments.Count == 0 || equipmentIndex == CONSTANTS.NULL_ID)
         {
             activeEquipment = null;
             return;
@@ -144,7 +144,7 @@ public class Action_Handler : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     public void SyncAbilityRpc(ushort abilityIndex)
     {
-        if(playerManager.Abilities.Count == 0 || abilityIndex == 999)
+        if(playerManager.Abilities.Count == 0 || abilityIndex == CONSTANTS.NULL_ID)
         {
             activeAbility = null;
             return;

@@ -82,10 +82,10 @@ public class Draft_Manager : NetworkBehaviour
     public void BeginDraft(){
         if(IsServer){
             RequestNamesRpc();
-            var draftCards = GenerateDraftCards(players.Count * 15);
+            var draftCards = GenerateDraftCards(players.Count * (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK));
             draftCards = Shuffler.Shuffle(draftCards);
             for(int i = 0; i < players.Count; i++){
-                draftState.Add(players[i], new List<Draft_Card>(draftCards.GetRange(i * 15, 15)));
+                draftState.Add(players[i], new List<Draft_Card>(draftCards.GetRange(i * (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK), (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK))));
             }
             //Remove the start draft button
             startDraftButton.gameObject.SetActive(false);
@@ -204,12 +204,12 @@ public class Draft_Manager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void SendStateAndDisplayDraftRpc(string stateAsString){
         draftState = stateFromString(stateAsString);
-        var numCardsToDisplay = draftState[NetworkManager.Singleton.LocalClientId].Count % 5;
+        var numCardsToDisplay = draftState[NetworkManager.Singleton.LocalClientId].Count % CONSTANTS.CARDS_PER_PACK;
         if (numCardsToDisplay == 0){
-            numCardsToDisplay = 5;
+            numCardsToDisplay = CONSTANTS.CARDS_PER_PACK;
         }
 
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < CONSTANTS.CARDS_PER_PACK; i++){
             if(i >= numCardsToDisplay){
                 cardManagers[i].gameObject.SetActive(false);
                 continue;
@@ -270,20 +270,27 @@ public class Draft_Manager : NetworkBehaviour
     }
 
     List<Draft_Card> GenerateDraftCards(int numberOfCards){
-        //Generate 40% Weapons, 12% Armor, 12% Ammo, 22% Abilities, 14% Archetypes
+        //Generate 50% Weapons, 10% Armor, 10% Ammo, 20% Abilities, 10% Archetypes
         List<Draft_Card> draftCards = new List<Draft_Card>();
         for(int i = 0; i < numberOfCards; i++){
             float percent = (float)i/numberOfCards;
-            if(percent <= 0.4f){
+            if(percent <= 0.5f){
                 //Weapon
                 draftCards.Add(new Draft_Card(new Data_Equipment(WeaponPool[UnityEngine.Random.Range(0, WeaponPool.Count)])));
-            }else if(percent <= 0.52f){
+            }else if(percent <= 0.6f){
                 //Armor
                 draftCards.Add(new Draft_Card(ArmorPool[UnityEngine.Random.Range(0, ArmorPool.Count)]));
-            }else if(percent <= 0.64f){
+            }else if(percent <= 0.7f){
                 //Ammo TODO: Hardcoded ammo amounts should be replaced with a more dynamic system
                 var amount = 0;
-                var ammoType = AmmoPool[UnityEngine.Random.Range(0, AmmoPool.Count)];
+                List<AmmoType> RestrictedAmmoPool = new List<AmmoType>(AmmoPool);
+                foreach(AmmoType a in AmmoPool){
+                    //If the ammo type is not on a weapon that has been added to the draft pool, remove it
+                    if(!draftCards.Any(x => x.EType == DraftCardType.Equipment && x.Equipment.ammoType == a)){
+                        RestrictedAmmoPool.Remove(a);
+                    }
+                }
+                var ammoType = RestrictedAmmoPool[UnityEngine.Random.Range(0, RestrictedAmmoPool.Count)];
                 switch(ammoType){
                     case AmmoType.Bullet:
                         amount = UnityEngine.Random.Range(30, 100);
@@ -302,7 +309,7 @@ public class Draft_Manager : NetworkBehaviour
                         break;
                 }
                 draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammoType, amount)));
-            }else if(percent <= 0.86f){
+            }else if(percent <= 0.9f){
                 //Ability
                 draftCards.Add(new Draft_Card(new Data_Ability(AbilityPool[UnityEngine.Random.Range(0, AbilityPool.Count)])));
             }else{

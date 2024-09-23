@@ -24,7 +24,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
 
     private float playerHealth;
     private float armor;
-    private float playerMaxHealth = 100;
+    private float playerMaxHealth = CONSTANTS.DEFAULT_HEALTH;
     public float Health { get => playerHealth + armor; }
 
     public List<Data_Ability> Abilities { get => abilities; }
@@ -37,7 +37,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         equipments.Clear();
         ammos.Clear();
 
-        playerMaxHealth = 100;
+        playerMaxHealth = CONSTANTS.DEFAULT_HEALTH;
         transform.localScale = Vector3.one;
         playerWeaponModel.SetActive(true);
     }
@@ -129,7 +129,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             return;
         }
         if(IsServer){
-            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > Health ? Health + 20 : damage);
+            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > Health ? Health + CONSTANTS.POINTS_PER_ELIMINATION : damage);
         }
         
         if(armor > 0)
@@ -162,7 +162,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             GetComponent<PlayerUI_Manager>().SetInGameUIActive(!isSpecating);
         }
         if(isSpecating){
-            GoToPosition(new Vector3(0, 22, 0));
+            GoToPosition(new Vector3(0, CONSTANTS.OUT_OF_BOUNDS_HEIGHT, 0));
         }
     }
 
@@ -287,7 +287,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     [Rpc(SendTo.Everyone)]
     public void ReadyRpc(){
         SetIsSpecating(false);
-        playerHealth = archetype != null ? archetype.health : 100;
+        playerHealth = archetype != null ? archetype.health : CONSTANTS.DEFAULT_HEALTH;
         GetComponent<Action_Handler>().Ready();
         GetComponent<Action_Handler>().AbilityCooldownMultiplier = archetype != null ? archetype.abilityCooldownModifier : 1;
         foreach(Data_Equipment equipment in equipments){

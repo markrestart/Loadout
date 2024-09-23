@@ -19,7 +19,7 @@ public class Player_Debug_Manager : MonoBehaviour
             debugUI.SetActive(!debugUI.activeSelf);
         }
         if(Input.GetKeyDown(KeyCode.F1)){
-            playerManager.TakeDamage(10000, playerManager.NetworkObject.OwnerClientId);
+            playerManager.TakeDamage(20, playerManager.NetworkObject.OwnerClientId);
         }
         if(debugUI.activeSelf){
             debugText.text = "";

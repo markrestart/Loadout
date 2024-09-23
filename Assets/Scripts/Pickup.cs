@@ -28,7 +28,7 @@ public class Pickup : NetworkBehaviour
             triggerCollider.enabled = true;
         }
 
-        ulong bestPlayerID = 999;
+        ulong bestPlayerID = CONSTANTS.NULL_ID;
         float bestTime = Time.time;
         // Check if any player has been in contact for 5 seconds
         foreach(ulong playerID in playersContactStartTimes.Keys){
@@ -37,7 +37,7 @@ public class Pickup : NetworkBehaviour
                 bestPlayerID = playerID;
             }
         }
-        if(bestTime <= Time.time - 5){
+        if(bestTime <= Time.time - CONSTANTS.PICKUP_TIME){
             playersContactStartTimes.Clear();
             DoPickup(bestPlayerID);
         }
@@ -70,7 +70,7 @@ public class Pickup : NetworkBehaviour
             return;
         }
         Rounds_Manager.Instance.AddScoreRpc(playerID, points);
-        SetPickupTimerRpc(Random.Range(-25, -10));
+        SetPickupTimerRpc(Random.Range(-CONSTANTS.PICKUP_RESPAWN_TIME_MAX, -CONSTANTS.PICKUP_RESPAWN_TIME_MIN));
     }
 
     [Rpc(SendTo.Everyone)]

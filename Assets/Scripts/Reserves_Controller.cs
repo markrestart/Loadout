@@ -70,7 +70,7 @@ public class Reserves_Controller : NetworkBehaviour
                 }
             }
         }else if(card.EType == DraftCardType.Ability){
-            int totalAbilities = 3;
+            int totalAbilities = CONSTANTS.DEFUALT_MAX_ABILITIES;
             int equipAbilities = 0;
             foreach(Transform child in reserveDisplay.transform){
                 Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
@@ -88,7 +88,7 @@ public class Reserves_Controller : NetworkBehaviour
                 }
             }
         }else if(card.EType == DraftCardType.Equipment || card.EType == DraftCardType.Ammo || card.EType == DraftCardType.Armor){
-            float totalCarryWeight = 100;
+            float totalCarryWeight = CONSTANTS.DEFAULT_CARRYING_CAPACITY;
             float equipWeight = card.Weight;
             foreach(Transform child in reserveDisplay.transform){
                 Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
@@ -114,8 +114,8 @@ public class Reserves_Controller : NetworkBehaviour
         int archetypeCount = 0;
         float weightCount = 0;
         int abilitiesCount = 0;
-        float totalCarryWeight = 100;
-        int maxAbilities = 3;
+        float totalCarryWeight = CONSTANTS.DEFAULT_CARRYING_CAPACITY;
+        int maxAbilities = CONSTANTS.DEFUALT_MAX_ABILITIES;
         foreach(Transform child in reserveDisplay.transform){
             Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
             if(iCard.IsToggled){
@@ -139,10 +139,10 @@ public class Reserves_Controller : NetworkBehaviour
         if(card.EType != DraftCardType.Archetype){
             return;
         }
-        float totalCarryWeight = 100;
+        float totalCarryWeight = CONSTANTS.DEFAULT_CARRYING_CAPACITY;
         float equipWeight = 0;
         int equipAbilities = 0;
-        int maxAbilities = 3;
+        int maxAbilities = CONSTANTS.DEFUALT_MAX_ABILITIES;
         foreach(Transform child in reserveDisplay.transform){
             Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
             if(iCard.IsToggled && iCard.Card.Weight > 0){

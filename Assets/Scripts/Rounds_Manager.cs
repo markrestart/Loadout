@@ -57,19 +57,19 @@ public class Rounds_Manager : NetworkBehaviour
                 }
             }
 
-            AddScoreRpc(playerID, (playersAlive.Count - alivePlayers) * 10);
+            AddScoreRpc(playerID, (playersAlive.Count - alivePlayers) * CONSTANTS.POINTS_PER_OUTLAST);
 
             //TODO: Can be optimized to check the survivor while checking if all players are dead
             if(allPlayersDead && IsServer){
-                ulong survivor = 999;
+                ulong survivor = CONSTANTS.NULL_ID;
                 foreach(ulong ID in playersAlive.Keys){
                     if(playersAlive[ID]){
                         survivor = ID;
                         break;
                     }
                 }
-                if(survivor != 999){
-                    AddScoreRpc(survivor, 25 + (playersAlive.Count - 1) * 10 + 10);
+                if(survivor != CONSTANTS.NULL_ID){
+                    AddScoreRpc(survivor, CONSTANTS.POINTS_PER_ROUND_WIN + (playersAlive.Count - 1) * CONSTANTS.POINTS_PER_OUTLAST + CONSTANTS.POINTS_PER_OUTLAST);
                 }
                 EndroundRpc();
             }
@@ -101,7 +101,7 @@ public class Rounds_Manager : NetworkBehaviour
 
     private IEnumerator EndRoundTimer(){
         //Countdown to next round
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(CONSTANTS.END_OF_ROUND_DELAY);
 
         //Hide score screen
         scoreScreen.SetActive(false);
