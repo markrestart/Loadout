@@ -49,17 +49,15 @@ public class Rounds_Manager : NetworkBehaviour
             bool allPlayersDead = true;
             int alivePlayers = 0;
             foreach(bool isAlive in playersAlive.Values){
-                Debug.Log(isAlive);
                 if(isAlive){
                     alivePlayers++;
                     if(alivePlayers > 1){
                         allPlayersDead = false;
                     }
                 }
-                Debug.Log(alivePlayers);
             }
 
-            AddScoreRpc(playerID, playersAlive.Count - alivePlayers * 25);
+            AddScoreRpc(playerID, (playersAlive.Count - alivePlayers) * 10);
 
             //TODO: Can be optimized to check the survivor while checking if all players are dead
             if(allPlayersDead && IsServer){
@@ -71,7 +69,7 @@ public class Rounds_Manager : NetworkBehaviour
                     }
                 }
                 if(survivor != 999){
-                    AddScoreRpc(survivor, 25);
+                    AddScoreRpc(survivor, 25 + (playersAlive.Count - 1) * 10 + 10);
                 }
                 EndroundRpc();
             }
@@ -90,10 +88,10 @@ public class Rounds_Manager : NetworkBehaviour
         scoreScreen.SetActive(true);
 
         foreach(var reservesController in Reserves_Controller.Instances){
-            reservesController.ResetRound(playersAlive[reservesController.NetworkManager.LocalClientId]);
+            reservesController.ResetRound(playersAlive[reservesController.NetworkObject.OwnerClientId]);
         }
 
-        if(currentRound <= 3){
+        if(currentRound < 3){
             StartCoroutine(EndRoundTimer());
         }
         else{

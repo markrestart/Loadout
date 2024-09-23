@@ -23,8 +23,9 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     private Transform spawnPointsParent;
 
     private float playerHealth;
+    private float armor;
     private float playerMaxHealth = 100;
-    public float Health { get => playerHealth; }
+    public float Health { get => playerHealth + armor; }
 
     public List<Data_Ability> Abilities { get => abilities; }
     public List<Data_Equipment> Equipments { get => equipments; }
@@ -67,7 +68,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     }
     public void AddArmor(int armor)
     {
-        playerHealth += armor;
+        this.armor += armor;
     }
     public void RemoveAbility(Data_Ability ability)
     {
@@ -128,14 +129,26 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             return;
         }
         if(IsServer){
-            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > playerHealth ? playerHealth + 20 : damage);
+            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > Health ? Health + 20 : damage);
         }
         
-        playerHealth -= damage;
+        if(armor > 0)
+        {
+            armor -= damage;
+            if(armor < 0)
+            {
+                playerHealth += armor;
+                armor = 0;
+            }
+        }
+        else
+        {
+            playerHealth -= damage;
+        }
         if(playerHealth <= 0)
         {
             //Player is dead
-            Rounds_Manager.Instance.PlayerDeath(NetworkManager.Singleton.LocalClientId);
+            Rounds_Manager.Instance.PlayerDeath(NetworkObject.OwnerClientId);
             SetIsSpecating(true);
         }
     }

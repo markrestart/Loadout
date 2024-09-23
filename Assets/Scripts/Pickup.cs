@@ -12,6 +12,8 @@ public class Pickup : NetworkBehaviour
     private MeshRenderer meshRenderer;
     [SerializeField]
     private Collider triggerCollider;
+    [SerializeField]
+    private GameObject pickupEffect;
 
     // Update is called once per frame
     void Update()
@@ -48,6 +50,7 @@ public class Pickup : NetworkBehaviour
         if(other.gameObject.GetComponent<Player_Manager>()){
             playersContactStartTimes.Add(other.gameObject.GetComponent<NetworkObject>().OwnerClientId, Time.time);
         }
+        pickupEffect.SetActive(true);
     }
 
     private void OnTriggerExit(Collider other) {
@@ -56,6 +59,9 @@ public class Pickup : NetworkBehaviour
         }
         if(other.gameObject.GetComponent<Player_Manager>()){
             playersContactStartTimes.Remove(other.gameObject.GetComponent<NetworkObject>().OwnerClientId);
+        }
+        if(playersContactStartTimes.Count == 0){
+            pickupEffect.SetActive(false);
         }
     }
 
@@ -69,6 +75,7 @@ public class Pickup : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     public void SetPickupTimerRpc(float points){
+        pickupEffect.SetActive(false);
         this.points = points;
         meshRenderer.enabled = false;
         triggerCollider.enabled = false;

@@ -17,8 +17,9 @@ MonoBehaviour:
   walkingSpeedModifier: 0.6
   runningSpeedModifier: 0.6
   jumpSpeedModifier: 0.5
-  hitboxSizeModifier: {x: 1, y: 0.5, z: 1}
+  hitboxSizeModifier: {x: 1.2, y: 0.7, z: 1}
   meleeModifier: 1.5
   health: 100
   carryWeight: 300
   abilitySlots: 2
+  abilityCooldownModifier: 1
