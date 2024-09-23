@@ -6316,11 +6316,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c448fa5531237caf4852d317e8bb83df, type: 2}
   - {fileID: 11400000, guid: 02edefd7f27c7c8eaa712d44ab7fc558, type: 2}
   - {fileID: 11400000, guid: c659f6b83b7837fdf8f3d9743aa34736, type: 2}
+  - {fileID: 11400000, guid: 5401c77fde9ae82d99268754e980d489, type: 2}
+  - {fileID: 11400000, guid: 2d59eb03df628dcb29b7331c27966926, type: 2}
   ArchetypePool:
   - {fileID: 11400000, guid: 2ad298872d4b99106addafb950405625, type: 2}
   - {fileID: 11400000, guid: 508da9ae9785e78e7a315dc0f83edd0c, type: 2}
   - {fileID: 11400000, guid: 74dca45893fe776a5a39b8d3e669b5f9, type: 2}
   - {fileID: 11400000, guid: f473a00d79a234603b8f77b3aca5b05e, type: 2}
+  - {fileID: 11400000, guid: 635b6343fa925ca8ebcc486d1a2d60f0, type: 2}
   ArmorPool: 050000000a000000190000002800000032000000
   AmmoPool: 01000000020000000500000004000000
   cardManagers:

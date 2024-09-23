@@ -23,5 +23,5 @@ MonoBehaviour:
   isHitscan: 1
   projectile: 0
   isAutomatic: 0
-  activationRate: 0.3
+  activationRate: 1
   weight: 20

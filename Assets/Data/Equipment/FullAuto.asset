@@ -19,9 +19,9 @@ MonoBehaviour:
   ammoType: 2
   magazineSize: 60
   reloadTime: 1
-  damage: 0.5
+  damage: 2
   isHitscan: 1
   projectile: 0
   isAutomatic: 1
-  activationRate: 0.1
+  activationRate: 0.5
   weight: 25

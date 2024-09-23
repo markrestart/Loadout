@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2308ed5bcdc23bcf4b4ab58382684650, type: 3}
-  m_Name: Agile
+  m_Name: Tiny
   m_EditorClassIdentifier: 
   archetypeName: Tiny
   description: High survivability. Low damage
@@ -21,4 +21,5 @@ MonoBehaviour:
   meleeModifier: 0.9
   health: 120
   carryWeight: 50
-  abilitySlots: 2
+  abilitySlots: 1
+  abilityCooldownModifier: 1

@@ -21,5 +21,5 @@ MonoBehaviour:
   meleeModifier: 1
   health: 100
   carryWeight: 100
-  abilitySlots: 5
+  abilitySlots: 3
   abilityCooldownModifier: 0.7

@@ -19,9 +19,9 @@ MonoBehaviour:
   ammoType: 0
   magazineSize: 0
   reloadTime: 0
-  damage: 20
+  damage: 12
   isHitscan: 1
   projectile: 0
   isAutomatic: 0
   activationRate: 0.6
-  weight: 15
+  weight: 30

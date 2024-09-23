@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d7c21e6b053d689f8d44a768f20220b, type: 3}
-  m_Name: Escape
+  m_Name: Untouchable
   m_EditorClassIdentifier: 
-  abilityName: Escape!
-  description: Teleport to a (probably) unoccupied area of the map. 40 second cooldown.
-  action: 2
-  values: []
-  cooldown: 40
+  abilityName: Untouchable
+  description: Prevent the next 1000 damage for 2 seconds. 10 second cooldown
+  action: 3
+  values:
+  - 1000
+  - 2
+  cooldown: 10
