@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -30,6 +31,8 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     public List<Data_Ability> Abilities { get => abilities; }
     public List<Data_Equipment> Equipments { get => equipments; }
     public Data_Archetype Archetype { get => archetype; }
+    [SerializeField]
+    private PlayerUI_Manager playerUIManager;
 
     public void ClearLoadout(){
         archetype = null;
@@ -119,6 +122,9 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage, ulong sourceID) 
     {
+        //TODO: Add damage indication for shielded and armor damage
+        playerUIManager.addDamage(math.ceil(damage));
+
         if(isShielded > 0)
         {
             shieldLimit -= damage;

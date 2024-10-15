@@ -5,8 +5,8 @@ using Unity.Netcode;
 
 public class Player_Movement_Controller : NetworkBehaviour
 {
-    public float walkingSpeed = 7.5f;
-    public float runningSpeed = 11.5f;
+    private float walkingSpeed = 7.5f;
+    private float runningSpeed = 11.5f;
     public float jumpSpeed = 8.0f;
     public float gravity = 20.0f;
     public GameObject playerLooking;
@@ -23,6 +23,9 @@ public class Player_Movement_Controller : NetworkBehaviour
 
     [HideInInspector]
     public bool canMove = true;
+
+    public float WalkingSpeed { get => walkingSpeed * playerManager.Archetype?.walkingSpeedModifier ?? walkingSpeed; set => walkingSpeed = value; }
+    public float RunningSpeed { get => runningSpeed * playerManager.Archetype?.runningSpeedModifier ?? runningSpeed; set => runningSpeed = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -62,14 +65,14 @@ public class Player_Movement_Controller : NetworkBehaviour
         Vector3 right = transform.TransformDirection(Vector3.right);
         // Press Left Shift to run
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
+        float curSpeedX = canMove ? (isRunning ? RunningSpeed : WalkingSpeed) * Input.GetAxis("Vertical") : 0;
+        float curSpeedY = canMove ? (isRunning ? RunningSpeed : WalkingSpeed) * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
         if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
-            moveDirection.y = jumpSpeed;
+            moveDirection.y = jumpSpeed * playerManager.Archetype?.jumpSpeedModifier ?? jumpSpeed;
         }
         else
         {

@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2308ed5bcdc23bcf4b4ab58382684650, type: 3}
-  m_Name: Ninja
+  m_Name: Titan
   m_EditorClassIdentifier: 
-  archetypeName: Ninja
-  description: One who carries no weapons. You must rely only on your fists and abilities.
-  walkingSpeedModifier: 2
-  runningSpeedModifier: 2
-  jumpSpeedModifier: 3
-  hitboxSizeModifier: {x: 0.9, y: 0.9, z: 0.9}
-  meleeModifier: 4
-  health: 100
+  archetypeName: Titan
+  description: The last resort. A huge form with massive health. No equipment. No
+    abilities. Can barely move. Massive melee damage.
+  walkingSpeedModifier: 0.5
+  runningSpeedModifier: 0
+  jumpSpeedModifier: 0
+  hitboxSizeModifier: {x: 2, y: 2.2, z: 2}
+  meleeModifier: 12
+  health: 1000
   carryWeight: 0
-  abilitySlots: 3
-  abilityCooldownModifier: 0.5
+  abilitySlots: 0
+  abilityCooldownModifier: 0.7
