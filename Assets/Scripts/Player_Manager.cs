@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -124,6 +125,9 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     {
         //TODO: Add damage indication for shielded and armor damage
         playerUIManager.addDamage(math.ceil(damage));
+
+        //TODO: Re-architect this absolutely disgusting code
+        Reserves_Controller.Instances.Where(x => x.OwnerClientId == sourceID).FirstOrDefault().PlayerManager.playerUIManager.DisplayHitConfirm();
 
         if(isShielded > 0)
         {

@@ -24,5 +24,6 @@ public class CONSTANTS
     public const int MIN_DAMAGE_INDICATOR_VALUE = 20;
     public const float MAX_DAMAGE_INDICATOR_OPACITY = .5f;
     public const float DAMAGE_INDICATOR_FADE_SPEED = 0.25f;
-    
+    public const float HIT_CONFIRM_DISPLAY_TIME = .9f;
+    public const float HIT_CONFIRM_MIN_SIZE = .5f;
 }

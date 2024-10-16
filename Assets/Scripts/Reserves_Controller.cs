@@ -27,6 +27,9 @@ public class Reserves_Controller : NetworkBehaviour
     [SerializeField]
     private SO_Equipment defaultEquipment;
 
+    //TODO: remove this when the hit confirmation is fixed to not need this
+    public Player_Manager PlayerManager { get => playerManager; }
+
     private static Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
     private static List<Reserves_Controller> instances = new List<Reserves_Controller>();
     public static List<Reserves_Controller> Instances { get => instances; }

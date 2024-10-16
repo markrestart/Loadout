@@ -20,6 +20,8 @@ public class PlayerUI_Manager : MonoBehaviour
     [SerializeField]
     private UnityEngine.UI.Image damageIndicatorOverlay;
     [SerializeField]
+    private UnityEngine.UI.Image hitConfirmIndicator;
+    [SerializeField]
     private GameObject inGameUI;
 
     private Player_Manager playerManager;
@@ -47,6 +49,11 @@ public class PlayerUI_Manager : MonoBehaviour
         Debug.Log($"Damage display: {damageOpacity}");
     }
 
+    public void DisplayHitConfirm(){
+        hitConfirmIndicator.color = new Color(1, 1, 1, 1);
+        hitConfirmIndicator.rectTransform.localScale = new Vector3(1, 1, 1);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -59,6 +66,12 @@ public class PlayerUI_Manager : MonoBehaviour
             damageIndicatorOverlay.color = new Color(1, 0, 0, damageOpacity / CONSTANTS.MAX_DAMAGE_INDICATOR_VALUE * CONSTANTS.MAX_DAMAGE_INDICATOR_OPACITY);
         }else{
             damageIndicatorOverlay.color = new Color(1, 0, 0, 0);
+        }
+
+        if(hitConfirmIndicator.color.a > 0){
+            hitConfirmIndicator.color = new Color(1, 1, 1, hitConfirmIndicator.color.a - Time.deltaTime/CONSTANTS.HIT_CONFIRM_DISPLAY_TIME);
+            float newSize = math.lerp(hitConfirmIndicator.rectTransform.localScale.x, CONSTANTS.HIT_CONFIRM_MIN_SIZE, Time.deltaTime);
+            hitConfirmIndicator.rectTransform.localScale = new Vector3(newSize, newSize, 1);
         }
 
 
