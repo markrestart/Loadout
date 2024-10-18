@@ -23,6 +23,8 @@ public class PlayerUI_Manager : MonoBehaviour
     private UnityEngine.UI.Image hitConfirmIndicator;
     [SerializeField]
     private GameObject inGameUI;
+    [SerializeField]
+    private DamageIndicatorDetails IndicatorDetails;
 
     private Player_Manager playerManager;
     private Action_Handler actionHandler;
@@ -39,14 +41,16 @@ public class PlayerUI_Manager : MonoBehaviour
 
     private float damageOpacity = 0;
     public void addDamage(float damage){
+        if (damage < IndicatorDetails.MIN_DAMAGE_ADD_VALUE){
+            damage = IndicatorDetails.MIN_DAMAGE_ADD_VALUE;
+        }
         damageOpacity += damage;
-        if(damageOpacity > CONSTANTS.MAX_DAMAGE_INDICATOR_VALUE){
-            damageOpacity = CONSTANTS.MAX_DAMAGE_INDICATOR_VALUE;
+        if(damageOpacity > IndicatorDetails.MAX_DAMAGE_INDICATOR_VALUE){
+            damageOpacity = IndicatorDetails.MAX_DAMAGE_INDICATOR_VALUE;
         }
-        if(damageOpacity < CONSTANTS.MIN_DAMAGE_INDICATOR_VALUE){
-            damageOpacity = CONSTANTS.MIN_DAMAGE_INDICATOR_VALUE;
+        if(damageOpacity < IndicatorDetails.MIN_DAMAGE_INDICATOR_VALUE){
+            damageOpacity = IndicatorDetails.MIN_DAMAGE_INDICATOR_VALUE;
         }
-        Debug.Log($"Damage display: {damageOpacity}");
     }
 
     public void DisplayHitConfirm(){
@@ -62,15 +66,15 @@ public class PlayerUI_Manager : MonoBehaviour
         }
 
         if(damageOpacity > 1){
-            damageOpacity = math.lerp(damageOpacity, 0, CONSTANTS.DAMAGE_INDICATOR_FADE_SPEED * Time.deltaTime);
-            damageIndicatorOverlay.color = new Color(1, 0, 0, damageOpacity / CONSTANTS.MAX_DAMAGE_INDICATOR_VALUE * CONSTANTS.MAX_DAMAGE_INDICATOR_OPACITY);
+            damageOpacity = math.lerp(damageOpacity, 0, IndicatorDetails.DAMAGE_INDICATOR_FADE_SPEED * Time.deltaTime);
+            damageIndicatorOverlay.color = new Color(1, 0, 0, damageOpacity / IndicatorDetails.MAX_DAMAGE_INDICATOR_VALUE * IndicatorDetails.MAX_DAMAGE_INDICATOR_OPACITY);
         }else{
             damageIndicatorOverlay.color = new Color(1, 0, 0, 0);
         }
 
         if(hitConfirmIndicator.color.a > 0){
-            hitConfirmIndicator.color = new Color(1, 1, 1, hitConfirmIndicator.color.a - Time.deltaTime/CONSTANTS.HIT_CONFIRM_DISPLAY_TIME);
-            float newSize = math.lerp(hitConfirmIndicator.rectTransform.localScale.x, CONSTANTS.HIT_CONFIRM_MIN_SIZE, Time.deltaTime);
+            hitConfirmIndicator.color = new Color(1, 1, 1, hitConfirmIndicator.color.a - Time.deltaTime/IndicatorDetails.HIT_CONFIRM_DISPLAY_TIME);
+            float newSize = math.lerp(hitConfirmIndicator.rectTransform.localScale.x, IndicatorDetails.HIT_CONFIRM_MIN_SIZE, Time.deltaTime);
             hitConfirmIndicator.rectTransform.localScale = new Vector3(newSize, newSize, 1);
         }
 
@@ -111,4 +115,15 @@ public class PlayerUI_Manager : MonoBehaviour
             abilityCooldownText.text = "";
         }
     }
+}
+
+[System.Serializable]
+class DamageIndicatorDetails{
+    public int MAX_DAMAGE_INDICATOR_VALUE = 135;
+    public int MIN_DAMAGE_INDICATOR_VALUE = 20;
+    public float MAX_DAMAGE_INDICATOR_OPACITY = .5f;
+    public float DAMAGE_INDICATOR_FADE_SPEED = 0.25f;
+    public int MIN_DAMAGE_ADD_VALUE = 5;
+    public float HIT_CONFIRM_DISPLAY_TIME = .9f;
+    public float HIT_CONFIRM_MIN_SIZE = .5f;
 }

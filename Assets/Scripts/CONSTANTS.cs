@@ -20,10 +20,4 @@ public class CONSTANTS
     public const int PICKUP_RESPAWN_TIME_MIN = 10;
     public const int NULL_ID = 999;
     public const int OUT_OF_BOUNDS_HEIGHT = 22;
-    public const int MAX_DAMAGE_INDICATOR_VALUE = 135;
-    public const int MIN_DAMAGE_INDICATOR_VALUE = 20;
-    public const float MAX_DAMAGE_INDICATOR_OPACITY = .5f;
-    public const float DAMAGE_INDICATOR_FADE_SPEED = 0.25f;
-    public const float HIT_CONFIRM_DISPLAY_TIME = .9f;
-    public const float HIT_CONFIRM_MIN_SIZE = .5f;
 }
