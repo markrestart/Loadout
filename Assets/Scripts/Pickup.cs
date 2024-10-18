@@ -22,7 +22,7 @@ public class Pickup : NetworkBehaviour
             return;
         }
         bool wasPickedUp = points <= 0;
-        points += Time.deltaTime;
+        points += Time.deltaTime * CONSTANTS.PICKUP_POINTS_PER_SECOND;
         if(wasPickedUp && points > 0){
             meshRenderer.enabled = true;
             triggerCollider.enabled = true;
@@ -69,8 +69,8 @@ public class Pickup : NetworkBehaviour
         if(!IsServer){
             return;
         }
-        Rounds_Manager.Instance.AddScoreRpc(playerID, points);
-        SetPickupTimerRpc(Random.Range(-CONSTANTS.PICKUP_RESPAWN_TIME_MAX, -CONSTANTS.PICKUP_RESPAWN_TIME_MIN));
+        Rounds_Manager.Instance.AddScoreRpc(playerID, Unity.Mathematics.math.ceil(points));
+        SetPickupTimerRpc(Random.Range(-CONSTANTS.PICKUP_RESPAWN_TIME_MAX * CONSTANTS.PICKUP_POINTS_PER_SECOND, -CONSTANTS.PICKUP_RESPAWN_TIME_MIN * CONSTANTS.PICKUP_POINTS_PER_SECOND));
     }
 
     [Rpc(SendTo.Everyone)]

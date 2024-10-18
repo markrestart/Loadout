@@ -14,6 +14,7 @@ public class CONSTANTS
     public const int POINTS_PER_ELIMINATION = 25;
     public const int POINTS_PER_ROUND_WIN = 100;
     public const int POINTS_PER_OUTLAST = 10;
+    public const float PICKUP_POINTS_PER_SECOND = 2f;
     public const int END_OF_ROUND_DELAY = 5;
     public const int PICKUP_TIME = 5;
     public const int PICKUP_RESPAWN_TIME_MAX = 25;

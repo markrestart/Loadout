@@ -17057,6 +17057,14 @@ MonoBehaviour:
   damageIndicatorOverlay: {fileID: 4416448631817020788}
   hitConfirmIndicator: {fileID: 8741566150922578616}
   inGameUI: {fileID: 5972143164922804658}
+  IndicatorDetails:
+    MAX_DAMAGE_INDICATOR_VALUE: 135
+    MIN_DAMAGE_INDICATOR_VALUE: 20
+    MAX_DAMAGE_INDICATOR_OPACITY: 0.5
+    DAMAGE_INDICATOR_FADE_SPEED: 0.25
+    MIN_DAMAGE_ADD_VALUE: 5
+    HIT_CONFIRM_DISPLAY_TIME: 0.9
+    HIT_CONFIRM_MIN_SIZE: 0.5
 --- !u!114 &7550108670673083495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26646,7 +26654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f8cef558f9f4feb22ac0803d183734ed, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

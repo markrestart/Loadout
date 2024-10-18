@@ -285,7 +285,8 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     public void Ready(){
         isReady = true;
 
-        GetComponent<PlayerUI_Manager>().SetInGameUIActive(true);
+        GetComponent<PlayerUI_Manager>().Ready();
+
 
         ReadyRpc();
 

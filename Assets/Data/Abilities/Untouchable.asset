@@ -16,6 +16,6 @@ MonoBehaviour:
   description: Prevent the next 1000 damage for 2 seconds. 10 second cooldown
   action: 3
   values:
-  - 1000
   - 2
+  - 1000
   cooldown: 10

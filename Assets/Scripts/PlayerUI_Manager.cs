@@ -35,6 +35,12 @@ public class PlayerUI_Manager : MonoBehaviour
         actionHandler = GetComponent<Action_Handler>();
     }
 
+    public void Ready(){
+        SetInGameUIActive(true);
+        damageIndicatorOverlay.color = new Color(1, 0, 0, 0);
+        hitConfirmIndicator.color = new Color(1, 1, 1, 0);
+    }
+
     public void SetInGameUIActive(bool active){
         inGameUI.SetActive(active);
     }
