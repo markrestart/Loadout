@@ -135,11 +135,12 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             if(shieldLimit <= 0)
             {
                 isShielded = 0;
+                effects[3].SetActive(false);
             }
             return;
         }
         if(IsServer){
-            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage > Health ? Health + CONSTANTS.POINTS_PER_ELIMINATION : damage);
+            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage >= Health ? Health + CONSTANTS.POINTS_PER_ELIMINATION : damage);
         }
         
         if(armor > 0)
@@ -229,6 +230,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         isShielded--;
         if(isShielded == 0)
         {
+            shieldLimit = 0;
             effects[3].SetActive(false);
         }
     }
