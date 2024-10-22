@@ -26,6 +26,7 @@ public class Pickup : NetworkBehaviour
         if(wasPickedUp && points > 0){
             meshRenderer.enabled = true;
             triggerCollider.enabled = true;
+            Message_System.AddMessage("The coin has returned!");
         }
 
         ulong bestPlayerID = CONSTANTS.NULL_ID;
@@ -70,6 +71,7 @@ public class Pickup : NetworkBehaviour
             return;
         }
         Rounds_Manager.Instance.AddScoreRpc(playerID, Unity.Mathematics.math.ceil(points));
+        Message_System.AddMessage($"{Rounds_Manager.Instance.PlayerNames[playerID]} picked up the coin for {Unity.Mathematics.math.ceil(points)} points!");
         SetPickupTimerRpc(Random.Range(-CONSTANTS.PICKUP_RESPAWN_TIME_MAX * CONSTANTS.PICKUP_POINTS_PER_SECOND, -CONSTANTS.PICKUP_RESPAWN_TIME_MIN * CONSTANTS.PICKUP_POINTS_PER_SECOND));
     }
 

@@ -155,7 +155,7 @@ public class Action_Handler : NetworkBehaviour
 
 
     [Rpc(SendTo.Server)]
-    public void FireProjectileRpc(ProjectileType projectile, float damage)
+    public void FireProjectileRpc(float damage, ProjectileType projectile, EquipmentAVEffect avEffect)
     {
         var sourceID = playerManager.NetworkObject.OwnerClientId;
         var projectileObj = Instantiate(PrefabLibrary.instance.Projectiles[projectile], firePoint.position, firePoint.rotation);
@@ -164,35 +164,51 @@ public class Action_Handler : NetworkBehaviour
         projectileObj.GetComponent<NetworkObject>().Spawn();
 
         PlayFireAnimationRpc();
+        AVFXRpc(avEffect, false, firePoint.position);
     }
 
     [Rpc(SendTo.Server)]
-    public void FireHitscanRpc(float damage)
+    public void FireHitscanRpc(float damage, EquipmentAVEffect avEffect)
     {
+        bool isHit = false;
         var sourceID = playerManager.NetworkObject.OwnerClientId;
         RaycastHit hit;
         if(Physics.Raycast(firePoint.position, firePoint.forward, out hit)){
             //If the raycast hits something with a Damage_Handler, deal damage
             if(hit.collider.GetComponent<Damage_Handler>()){
                 hit.collider.GetComponent<Damage_Handler>().TakeDamage(damage * damageMultiplier, sourceID);
+                isHit = true;
             }
         }
 
         PlayFireAnimationRpc();
+        AVFXRpc(avEffect, isHit, hit.point);
     }
 
     [Rpc(SendTo.Server)]
-    public void MeleeAttackRpc(float damage)
+    public void MeleeAttackRpc(float damage, EquipmentAVEffect avEffect)
     {
+        bool hit = false;
         var sourceID = playerManager.NetworkObject.OwnerClientId;
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.5f);
         foreach(Collider hitCollider in hitColliders){
             if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
                 hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage * (playerManager.Archetype != null ? playerManager.Archetype.meleeModifier : 1), sourceID);
+                hit = true;
             }
         }
 
         PlayFireAnimationRpc();
+        AVFXRpc(avEffect, hit, hitColliders.Length > 0 ? hitColliders[0].transform.position : firePoint.position);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void AVFXRpc(EquipmentAVEffect avEffect, bool isHit, Vector3 hitPoint){
+        if(avEffect == EquipmentAVEffect.NA){
+            return;
+        }
+        var fxObj = Instantiate(PrefabLibrary.instance.AVEffects[avEffect], hitPoint, Quaternion.identity);
+        fxObj.GetComponent<AVEffect>().StartEffect(isHit, firePoint.position);
     }
 
     [Rpc(SendTo.Everyone)]

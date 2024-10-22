@@ -59,6 +59,7 @@ public class Rounds_Manager : NetworkBehaviour
 
             float outlastScore = (playersAlive.Count - alivePlayers - 1) * CONSTANTS.POINTS_PER_OUTLAST;
             AddScoreRpc(playerID, outlastScore);
+            Message_System.AddMessage($"{playerNames[playerID]} has been eliminated!");
 
             //TODO: Can be optimized to check the survivor while checking if all players are dead
             if(allPlayersDead && IsServer){

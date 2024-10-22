@@ -25,3 +25,7 @@ MonoBehaviour:
   isAutomatic: 1
   activationRate: 0.5
   weight: 25
+  fireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  equipSound: {fileID: 0}
+  avEffect: 2

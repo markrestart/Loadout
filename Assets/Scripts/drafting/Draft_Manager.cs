@@ -35,6 +35,7 @@ public class Draft_Manager : NetworkBehaviour
 
         if(IsServer){
             AddPlayerRpc(NetworkManager.Singleton.LocalClientId);
+            Message_System.AddMessage("Player has joined the draft. Total players: " + players.Count);
         }
 
         if(Instance == null){
@@ -146,6 +147,7 @@ public class Draft_Manager : NetworkBehaviour
             draftState[players[players.Count - 1]] = temp;
 
             SendStateAndDisplayDraftRpc(stateToString(draftState));
+            Message_System.AddMessage($"{draftState[NetworkManager.Singleton.LocalClientId].Count} cards left to draft");
         }
     }
 

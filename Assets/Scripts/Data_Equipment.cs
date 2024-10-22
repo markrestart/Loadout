@@ -25,6 +25,7 @@ public class Data_Equipment
     public AudioClip fireSound;
     public AudioClip reloadSound;
     public AudioClip equipSound;
+    public EquipmentAVEffect avEffect = EquipmentAVEffect.NA;
 
     private float lastActivationTime;
     private float lastReloadTime;
@@ -55,14 +56,14 @@ public class Data_Equipment
         lastActivationTime = Time.time;
         if(equipmentType == EquipmentType.MeleeWeapon){
             //Deal damage to all enemies in a radius
-            action_Handler.MeleeAttackRpc(damage);
+            action_Handler.MeleeAttackRpc(damage, avEffect);
         }
         else if(isHitscan){
             currentAmmo--;
-            action_Handler.FireHitscanRpc(damage);
+            action_Handler.FireHitscanRpc(damage, avEffect);
         }else{
             currentAmmo--;
-            action_Handler.FireProjectileRpc(projectile, damage);
+            action_Handler.FireProjectileRpc(damage, projectile, avEffect);
         }
     }
     public void Ready() {
@@ -108,5 +109,6 @@ public class Data_Equipment
         this.fireSound = scriptableEquipment.fireSound;
         this.reloadSound = scriptableEquipment.reloadSound;
         this.equipSound = scriptableEquipment.equipSound;
+        this.avEffect = scriptableEquipment.avEffect;
     }
 }

@@ -22,6 +22,7 @@ public class SO_Equipment : ScriptableObject {
     public AudioClip fireSound;
     public AudioClip reloadSound;
     public AudioClip equipSound;
+    public EquipmentAVEffect avEffect = EquipmentAVEffect.NA;
 
     private float lastActivationTime = 0.0f;
     private float lastReloadTime = 0.0f;
@@ -54,6 +55,13 @@ public enum EquipmentType {
     RangedWeapon,
     MeleeWeapon
 }
+
+public enum EquipmentAVEffect {
+    NA,
+    Laser,
+    Impact,
+}
+
 
 public enum AmmoType {
     NA,
