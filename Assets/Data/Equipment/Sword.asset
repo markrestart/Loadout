@@ -19,9 +19,12 @@ MonoBehaviour:
   ammoType: 0
   magazineSize: 0
   reloadTime: 0
-  damage: 12
+  damage: 25
   isHitscan: 1
   projectile: 0
   isAutomatic: 0
   activationRate: 0.6
-  weight: 30
+  weight: 50
+  fireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  equipSound: {fileID: 0}

@@ -12,9 +12,10 @@ public class CONSTANTS
     public const int MAX_PLAYERS = 4;
     public const int MAX_ROUNDS = 3;
     public const int POINTS_PER_ELIMINATION = 25;
-    public const int POINTS_PER_ROUND_WIN = 100;
+    public const float POINTS_PER_DAMAGE = 0.5f;
+    public const int POINTS_PER_ROUND_WIN = 50;
     public const int POINTS_PER_OUTLAST = 10;
-    public const float PICKUP_POINTS_PER_SECOND = 2f;
+    public const float PICKUP_POINTS_PER_SECOND = 3f;
     public const int END_OF_ROUND_DELAY = 5;
     public const int PICKUP_TIME = 5;
     public const int PICKUP_RESPAWN_TIME_MAX = 25;

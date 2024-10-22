@@ -19,6 +19,9 @@ public class SO_Equipment : ScriptableObject {
     public bool isAutomatic = false;
     public float activationRate = 1.0f;
     public float weight = 1.0f;
+    public AudioClip fireSound;
+    public AudioClip reloadSound;
+    public AudioClip equipSound;
 
     private float lastActivationTime = 0.0f;
     private float lastReloadTime = 0.0f;

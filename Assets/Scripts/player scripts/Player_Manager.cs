@@ -34,6 +34,15 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     public Data_Archetype Archetype { get => archetype; }
     [SerializeField]
     private PlayerUI_Manager playerUIManager;
+    [SerializeField]
+    private AudioSource walkingSound;
+    [SerializeField]
+    private AudioSource weaponSound;
+    [SerializeField]
+    private AudioSource abilitySound;
+
+    public AudioSource WeaponSound { get => weaponSound; }
+    public AudioSource AbilitySound { get => abilitySound; }
 
     public void ClearLoadout(){
         archetype = null;
@@ -140,7 +149,10 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             return;
         }
         if(IsServer){
-            Rounds_Manager.Instance.AddScoreRpc(sourceID, damage >= Health ? Health + CONSTANTS.POINTS_PER_ELIMINATION : damage);
+            Rounds_Manager.Instance.AddScoreRpc(sourceID, 
+                damage >= Health ? 
+                Health * CONSTANTS.POINTS_PER_DAMAGE + CONSTANTS.POINTS_PER_ELIMINATION : 
+                damage * CONSTANTS.POINTS_PER_DAMAGE);
         }
         
         if(armor > 0)

@@ -6,6 +6,9 @@ public class SO_Ability : ScriptableObject {
     public AbilityActions action;
     public float[] values;
     public float cooldown = 1.0f;
+    public AudioClip activateSound;
+    public AudioClip loopingSound;
+    public AudioClip deactivateSound;
 }
 
 public enum AbilityActions{

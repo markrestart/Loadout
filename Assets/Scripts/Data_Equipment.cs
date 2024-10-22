@@ -22,6 +22,9 @@ public class Data_Equipment
     public bool isAutomatic;
     public float activationRate;
     public float weight;
+    public AudioClip fireSound;
+    public AudioClip reloadSound;
+    public AudioClip equipSound;
 
     private float lastActivationTime;
     private float lastReloadTime;
@@ -102,5 +105,8 @@ public class Data_Equipment
         this.lastActivationTime = 0.0f;
         this.lastReloadTime = 0.0f;
         this.equipmentModel = scriptableEquipment.equipmentModel;
+        this.fireSound = scriptableEquipment.fireSound;
+        this.reloadSound = scriptableEquipment.reloadSound;
+        this.equipSound = scriptableEquipment.equipSound;
     }
 }

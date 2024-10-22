@@ -17,7 +17,7 @@ MonoBehaviour:
   equipmentType: 0
   equipmentModel: 4
   ammoType: 4
-  magazineSize: 2
+  magazineSize: 1
   reloadTime: 5
   damage: 120
   isHitscan: 0
@@ -25,3 +25,6 @@ MonoBehaviour:
   isAutomatic: 1
   activationRate: 3
   weight: 88
+  fireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
+  equipSound: {fileID: 0}

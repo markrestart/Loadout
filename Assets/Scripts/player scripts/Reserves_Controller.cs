@@ -214,7 +214,8 @@ public class Reserves_Controller : NetworkBehaviour
         if(playerManager.Archetype != null){
             AddToReserves(new Draft_Card(playerManager.Archetype));
         }
-        if(isSurvivor){
+        //TODO: revisit this. Currently, only the survivor LOSES their equipment
+        if(!isSurvivor){
             foreach(var equipment in playerManager.Equipments){
                 if(equipment.equipmentName != defaultEquipment.equipmentName){
                     AddToReserves(new Draft_Card(equipment));

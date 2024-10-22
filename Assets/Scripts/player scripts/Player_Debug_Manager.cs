@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Netcode;
 
 public class Player_Debug_Manager : MonoBehaviour
 {
@@ -26,6 +27,8 @@ public class Player_Debug_Manager : MonoBehaviour
             foreach(ulong id in Rounds_Manager.Instance.PlayerScores.Keys){
                 debugText.text += $"{Rounds_Manager.Instance.PlayerNames[id]}({id}): {Rounds_Manager.Instance.PlayerScores[id]} - {Rounds_Manager.Instance.PlayersAlive[id]}\n";
             }
+            var ping = NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.NetworkConfig.NetworkTransport.ServerClientId);
+            debugText.text += $"Ping: {ping}\n";
         }
     }
 }

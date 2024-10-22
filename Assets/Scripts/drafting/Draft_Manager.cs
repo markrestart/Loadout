@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,6 +86,14 @@ public class Draft_Manager : NetworkBehaviour
             for(int i = 0; i < players.Count; i++){
                 draftState.Add(players[i], new List<Draft_Card>(draftCards.GetRange(i * (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK), (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK))));
             }
+            //TODO: Revisit this. Currently, any archetypes are moved to the front of the draftState list for each player
+            foreach(var player in draftState){
+                var archetypes = player.Value.Where(x => x.EType == DraftCardType.Archetype).ToList();
+                foreach(var archetype in archetypes){
+                    player.Value.Remove(archetype);
+                    player.Value.Insert(0, archetype);
+                }
+            }
             //Remove the start draft button
             startDraftButton.gameObject.SetActive(false);
             //Display the draft cards
@@ -105,11 +112,28 @@ public class Draft_Manager : NetworkBehaviour
         foreach(var reservesController in reservesControllers){
             reservesController.Value.EnterEquipPhase(playersList.ToList());
         }
+        SetPlayerSkins();
 
         //Disable the draft manager
         draftUI.gameObject.SetActive(false);
     }
 
+    private void SetPlayerSkins(){
+        if(IsServer){
+            foreach(var reservesController in reservesControllers){
+                var playerID = reservesController.Key;
+                var skinIndex = Random.Range(0, 100);
+                var colorIndex = (int)playerID;
+                SetPlayerSkinsRpc(playerID, skinIndex, colorIndex);
+            }
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetPlayerSkinsRpc(ulong playerID, int skinIndex, int colorIndex){
+        var reservesController = reservesControllers[playerID];
+        reservesController.GetComponent<Player_Skin_Manager>().SetSkin(skinIndex, colorIndex);
+    }
 
 //TODO: have the draft rotation alternate between clockwise and counter clockwise
     void RotateDraft(){

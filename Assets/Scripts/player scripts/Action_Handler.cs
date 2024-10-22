@@ -185,7 +185,7 @@ public class Action_Handler : NetworkBehaviour
     public void MeleeAttackRpc(float damage)
     {
         var sourceID = playerManager.NetworkObject.OwnerClientId;
-        Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.0f);
+        Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, 1.5f);
         foreach(Collider hitCollider in hitColliders){
             if(hitCollider.transform != firePoint.parent.parent.parent && hitCollider.GetComponent<Damage_Handler>()){
                 hitCollider.GetComponent<Damage_Handler>().TakeDamage(damage * (playerManager.Archetype != null ? playerManager.Archetype.meleeModifier : 1), sourceID);
@@ -203,6 +203,10 @@ public class Action_Handler : NetworkBehaviour
             var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
             animator.clip = animator.GetClip($"{animator.gameObject.name}Fire");
             animator.Play();
+            if(activeEquipment.fireSound != null){
+                playerManager.WeaponSound.clip = activeEquipment.fireSound;
+                playerManager.WeaponSound.Play();
+            }
         }
     }
 
@@ -212,6 +216,10 @@ public class Action_Handler : NetworkBehaviour
             var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
             animator.clip = animator.GetClip($"{animator.gameObject.name}Equip");
             animator.Play();
+            if(activeEquipment.equipSound != null){
+                playerManager.WeaponSound.clip = activeEquipment.equipSound;
+                playerManager.WeaponSound.Play();
+            }
         }
     }
 
@@ -222,6 +230,10 @@ public class Action_Handler : NetworkBehaviour
             var animator = weaponModels[(int)activeEquipment.equipmentModel].GetComponent<Animation>();
             animator.clip = animator.GetClip($"{animator.gameObject.name}Reload");
             animator.Play();
+            if(activeEquipment.reloadSound != null){
+                playerManager.WeaponSound.clip = activeEquipment.reloadSound;
+                playerManager.WeaponSound.Play();
+            }
         }
     }
 }

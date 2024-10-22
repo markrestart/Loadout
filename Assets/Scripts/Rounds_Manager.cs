@@ -44,7 +44,6 @@ public class Rounds_Manager : NetworkBehaviour
     }
 
     public void PlayerDeath(ulong playerID){
-        Debug.Log("Player death");
         playersAlive[playerID] = false;
         if(IsServer){
             bool allPlayersDead = true;
@@ -60,7 +59,6 @@ public class Rounds_Manager : NetworkBehaviour
 
             float outlastScore = (playersAlive.Count - alivePlayers - 1) * CONSTANTS.POINTS_PER_OUTLAST;
             AddScoreRpc(playerID, outlastScore);
-            Debug.Log($"Player {playerID} died. Outlast score: {outlastScore}");
 
             //TODO: Can be optimized to check the survivor while checking if all players are dead
             if(allPlayersDead && IsServer){
@@ -76,7 +74,6 @@ public class Rounds_Manager : NetworkBehaviour
                     float outlastScoreForSurvivor = (playersAlive.Count - 1) * CONSTANTS.POINTS_PER_OUTLAST;
                     float totalScore = survivorScore + outlastScoreForSurvivor;
                     AddScoreRpc(survivor, totalScore);
-                    Debug.Log($"Player {survivor} won the round. Round win score: {survivorScore}. Outlast score: {outlastScoreForSurvivor}. Total score: {totalScore}");
                 }
                 EndroundRpc();
             }

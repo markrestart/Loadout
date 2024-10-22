@@ -13,12 +13,20 @@ public class Data_Ability
     public float CooldownRemaining { get => cooldownRemaining(); }
     private float cooldownMultiplier = 1;
 
+    public AudioClip activateSound;
+    //TODO: add logic for looping and deactivating sounds
+    public AudioClip loopingSound;
+    public AudioClip deactivateSound;
+
     public Data_Ability(SO_Ability scriptableAbility){
         this.abilityName = scriptableAbility.abilityName;
         this.description = scriptableAbility.description;
         this.cooldown = scriptableAbility.cooldown;
         this.values = scriptableAbility.values;
         this.action = scriptableAbility.action;
+        this.activateSound = scriptableAbility.activateSound;
+        this.loopingSound = scriptableAbility.loopingSound;
+        this.deactivateSound = scriptableAbility.deactivateSound;
     }
 
     private float cooldownRemaining(){
@@ -37,6 +45,10 @@ public class Data_Ability
     public void Activate(Player_Manager playerManager){
         if(Time.time - lastActivationTime < Cooldown){
             return;
+        }
+        if(activateSound != null){
+            playerManager.AbilitySound.clip = activateSound;
+            playerManager.AbilitySound.Play();
         }
         lastActivationTime = Time.time;
         switch(action){
