@@ -2,13 +2,22 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
+using Unity.Services.Relay;
+using Unity.Networking.Transport.Relay;
 
 public class ConnectionUI_Manager : MonoBehaviour
 {
     [SerializeField]
     private GameObject panel;
     [SerializeField]
-    private TMPro.TMP_InputField ipInput;
+    private TMPro.TMP_InputField roomCodeInput;
+    [SerializeField]
+    private Draft_Manager draftManager;
+    [SerializeField]
+    private TMPro.TMP_Text roomCodeText;
 
     private static string screenname = "";
 
@@ -23,28 +32,51 @@ public class ConnectionUI_Manager : MonoBehaviour
         panel.SetActive(true);
     }
     // Host a game using Unity Netcode for GameObjects
-    public void HostGame()
+    public async void HostGame()
     {
-        NetworkManager.Singleton.StartHost();
+        var roomCode = await StartHostWithRelay();
+        if (!string.IsNullOrEmpty(roomCode)){
+            Message_System.LocalMessage("Join code: " + roomCode);
+            draftManager.enabled = true;
+            roomCodeText.text = "Join code: " + roomCode;
+            gameObject.SetActive(false);
+        }
     }
 
     // Join a game using Unity Netcode for GameObjects
-    public void JoinGame()
+    public async void JoinGame()
     {
-        NetworkManager.Singleton.StartClient();
+        var connected = await StartClientWithRelay();
+        if (connected){
+            draftManager.enabled = true;
+            gameObject.SetActive(false);
+        }
     }
 
-    public void IPInput(string ip)
+    public async Task<string> StartHostWithRelay()
     {
-        //remove any whitespace, special, or alphabetic characters
-        ip = new string(ip.Where(c => char.IsDigit(c) || c == '.').ToArray());
-        ipInput.text = ip;
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
+        Unity.Services.Relay.Models.Allocation allocation = await RelayService.Instance.CreateAllocationAsync(CONSTANTS.MAX_PLAYERS);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
+        var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+        return NetworkManager.Singleton.StartHost() ? joinCode : null;
+    }
 
-        //check if the ip is valid
-        if(ip.Split('.').Length != 4){
-            return;
+    public async Task<bool> StartClientWithRelay()
+    {
+        var joinCode = roomCodeInput.text;
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip,7777);
+        var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        return !string.IsNullOrEmpty(joinCode) && NetworkManager.Singleton.StartClient();
     }
 }

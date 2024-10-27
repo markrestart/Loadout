@@ -35,6 +35,12 @@ public class Message_System : NetworkBehaviour
         }
     }
 
+    public static void LocalMessage(string message){
+        if(Instance != null){
+            Instance.messageQueue.Add(message);
+        }
+    }
+
     private void Start() {
         if(Instance == null){
             Instance = this;

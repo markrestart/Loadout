@@ -18,6 +18,8 @@ public class Draft_Manager : NetworkBehaviour
     private GameObject startDraftButton;
     [SerializeField]
     private GameObject draftUI;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI draftedCardsText;
 
     private Dictionary<ulong, List<Draft_Card>> draftState = new Dictionary<ulong, List<Draft_Card>>();
     private Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
@@ -243,6 +245,16 @@ public class Draft_Manager : NetworkBehaviour
             cardManagers[i].gameObject.SetActive(true);
             cardManagers[i].SetCard(draftState[NetworkManager.Singleton.LocalClientId][i]);
         }
+
+        var drafted = reservesControllers[NetworkManager.Singleton.LocalClientId].Reserves;
+        var draftedText = "Drafted: ";
+        foreach(var card in drafted){
+            draftedText += card.Name + ", ";
+        }
+        if(draftedText.Length > 0){
+            draftedText.Remove(draftedText.Length - 2);
+        }
+        draftedCardsText.text = draftedText;
 
         //Testing utilty code
         if(autoDraft){

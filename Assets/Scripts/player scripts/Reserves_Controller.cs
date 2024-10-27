@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 public class Reserves_Controller : NetworkBehaviour
 {
     private List<Draft_Card> reserves = new List<Draft_Card>();
+    public List<Draft_Card> Reserves { get => reserves; }
     [SerializeField]
     private GameObject reserveCardPrefab;
     [SerializeField]
@@ -99,11 +100,14 @@ public class Reserves_Controller : NetworkBehaviour
                     totalCarryWeight = iCard.Card.Archetype.carryWeight;
                 }
             }
+            if(equipWeight > totalCarryWeight){
+                return false;
+            }
             foreach(Transform child in reserveDisplay.transform){
                 Reserve_Card_Manager iCard = child.GetComponent<Reserve_Card_Manager>();
                 if(iCard.IsToggled && iCard.Card.Weight > 0){
                     equipWeight += iCard.Card.Weight;
-                    if(equipWeight >= totalCarryWeight){
+                    if(equipWeight > totalCarryWeight){
                         return false;
                     }
                 }
@@ -136,6 +140,12 @@ public class Reserves_Controller : NetworkBehaviour
         archetypeCountText.text =   $"{archetypeCount.ToString()}/1";
         weightCountText.text =      $"{weightCount.ToString()}/{totalCarryWeight.ToString()}";
         abilitiesCountText.text =   $"{abilitiesCount.ToString()}/{maxAbilities.ToString()}";
+    }
+
+    public void ResetEquipTexts(){
+        archetypeCountText.text =   "0/1";
+        weightCountText.text =      $"0/{CONSTANTS.DEFAULT_CARRYING_CAPACITY}";
+        abilitiesCountText.text =   $"0/{CONSTANTS.DEFUALT_MAX_ABILITIES}";
     }
 
     public void RemoveFromSelected(Draft_Card card){
@@ -305,6 +315,7 @@ public class Reserves_Controller : NetworkBehaviour
             //display the player count
             readyState = playerIds.ToDictionary(x => x, x => false);
             playersCountText.text = $"0/{readyState.Count}";
+            ResetEquipTexts();
         }
     }
 }
