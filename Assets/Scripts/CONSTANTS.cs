@@ -22,4 +22,5 @@ public class CONSTANTS
     public const int PICKUP_RESPAWN_TIME_MIN = 10;
     public const int NULL_ID = 999;
     public const int OUT_OF_BOUNDS_HEIGHT = 22;
+    public const int STEAM_APP_ID = 480;
 }

@@ -106,7 +106,7 @@ public class Draft_Manager : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     private void RequestNamesRpc(){
-        Rounds_Manager.Instance.RegisterNameRpc(NetworkManager.Singleton.LocalClientId, ConnectionUI_Manager.GetScreenName());
+        Rounds_Manager.Instance.RegisterNameRpc(NetworkManager.Singleton.LocalClientId, Steamworks.SteamClient.Name);
     }
 
     [Rpc(SendTo.Everyone)]
