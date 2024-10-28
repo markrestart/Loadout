@@ -194,7 +194,8 @@ public class ConnectionUI_Manager : MonoBehaviour
 			return;
 		}
 
-		lobby.SetFriendsOnly(); // Set to friends only!
+		//lobby.SetFriendsOnly(); // Set to friends only!
+		lobby.SetPublic(); // Set to public!
 		lobby.SetData("name", "Random Cool Lobby");
 		lobby.SetJoinable(true);
 
