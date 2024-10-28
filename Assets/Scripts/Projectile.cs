@@ -23,7 +23,7 @@ public class Projectile : MonoBehaviour
 
     private void Start()
     {
-        GetComponent<Rigidbody>().velocity = transform.forward * speed;
+        GetComponent<Rigidbody>().linearVelocity = transform.forward * speed;
     }
 
     private void OnCollisionEnter(Collision other) {
