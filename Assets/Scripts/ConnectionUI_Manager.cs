@@ -12,10 +12,13 @@ using Steamworks;
 using Steamworks.Data;
 using System.Collections.Generic;
 
+
 public class ConnectionUI_Manager : MonoBehaviour
 {
+	public bool UnityTransportEnabled = false;
     public static ConnectionUI_Manager Instance { get; private set; } = null;
-    private FacepunchTransport transport;
+    private FacepunchTransport FPtransport;
+	private UnityTransport Utransport;
 	public Lobby? CurrentLobby { get; private set; } = null;
     public List<Lobby> Lobbies { get; private set; } = new List<Lobby>(capacity: 100);
 
@@ -25,6 +28,11 @@ public class ConnectionUI_Manager : MonoBehaviour
     private Draft_Manager draftManager;
 
     private void Start() {
+		if(!UnityTransportEnabled){
+			roomCodeInput.gameObject.SetActive(false);
+			joinButtonRelay.SetActive(false);
+			hostButtonRelay.SetActive(false);
+		}
         panel.SetActive(true);
 
         if(Instance == null){
@@ -33,7 +41,8 @@ public class ConnectionUI_Manager : MonoBehaviour
             Destroy(this);
         }
 
-        transport = NetworkManager.Singleton.GetComponent<FacepunchTransport>();
+        FPtransport = NetworkManager.Singleton.GetComponent<FacepunchTransport>();
+		Utransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
 
         SteamMatchmaking.OnLobbyCreated += OnLobbyCreated;
         SteamMatchmaking.OnLobbyEntered += OnLobbyEntered;
@@ -103,9 +112,9 @@ public class ConnectionUI_Manager : MonoBehaviour
 		NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
 		NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnected;
 
-		transport.targetSteamId = id;
+		FPtransport.targetSteamId = id;
 
-		Debug.Log($"Joining room hosted by {transport.targetSteamId}", this);
+		Debug.Log($"Joining room hosted by {FPtransport.targetSteamId}", this);
 
 		if (NetworkManager.Singleton.StartClient())
 			Debug.Log("Client has joined!", this);
@@ -119,6 +128,14 @@ public class ConnectionUI_Manager : MonoBehaviour
 			return;
 
 		NetworkManager.Singleton.Shutdown();
+	}
+
+	public bool CloseLobbyToNewMembers()
+	{
+		if (CurrentLobby == null)
+			return false;
+
+		return CurrentLobby?.SetJoinable(false) ?? false;
 	}
 
 	public async Task<bool> RefreshLobbies(int maxResults = 20)
@@ -206,11 +223,15 @@ public class ConnectionUI_Manager : MonoBehaviour
 
 	#region Network Callbacks
 
-	private void ClientConnected(ulong clientId) => Debug.Log($"I'm connected, clientId={clientId}");
+	private void ClientConnected(ulong clientId) {
+		Message_System.LocalMessage("Connected to server!");
+        draftManager.enabled = true;
+        gameObject.SetActive(false);
+	}
 
     private void ClientDisconnected(ulong clientId)
 	{
-		Debug.Log($"I'm disconnected, clientId={clientId}");
+		Message_System.LocalMessage("Disconnected from server!");
 
 		NetworkManager.Singleton.OnClientDisconnectCallback -= ClientDisconnected;
 		NetworkManager.Singleton.OnClientConnectedCallback -= ClientConnected;
@@ -227,4 +248,82 @@ public class ConnectionUI_Manager : MonoBehaviour
     private void OnClientDisconnectCallback(ulong clientId) => Debug.Log($"Client disconnected, clientId={clientId}", this);
 
     #endregion
+
+	#region Unity Relay
+	
+	[SerializeField]
+	private TMPro.TMP_InputField roomCodeInput;
+	[SerializeField]
+	private GameObject joinButtonRelay;
+	[SerializeField]
+	private GameObject hostButtonRelay;
+	[SerializeField]
+	private TMPro.TMP_Text codeDisplayText;
+
+	public async void HostGameRelay(){
+		var code = await StartHostWithRelay();
+		if (code != null)
+		{
+			codeDisplayText.text = code;
+		}
+		else
+		{
+			Message_System.LocalMessage("Failed to host game!");
+		}
+	}
+
+	public async void JoinGameRelay(){
+		if (await StartClientWithRelay())
+		{
+			Message_System.LocalMessage("Joining game...");
+		}
+		else
+		{
+			Message_System.LocalMessage("Failed to join game!");
+		}
+	}
+
+	public async Task<string> StartHostWithRelay()
+    {
+		Utransport.enabled = true;
+		FPtransport.enabled = false;
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+
+		NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
+		NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
+        Unity.Services.Relay.Models.Allocation allocation = await RelayService.Instance.CreateAllocationAsync(CONSTANTS.MAX_PLAYERS);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
+        var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+        return NetworkManager.Singleton.StartHost() ? joinCode : null;
+    }
+
+    public async Task<bool> StartClientWithRelay()
+    {
+		Utransport.enabled = true;
+		FPtransport.enabled = false;
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+
+		NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
+		NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnected;
+		
+        var joinCode = roomCodeInput.text;
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
+
+        var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        return !string.IsNullOrEmpty(joinCode) && NetworkManager.Singleton.StartClient();
+    }
+
+	#endregion
 }

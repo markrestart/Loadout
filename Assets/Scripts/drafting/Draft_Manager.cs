@@ -99,6 +99,7 @@ public class Draft_Manager : NetworkBehaviour
             }
             //Remove the start draft button
             startDraftButton.gameObject.SetActive(false);
+            ConnectionUI_Manager.Instance.CloseLobbyToNewMembers();
             //Display the draft cards
             SendStateAndDisplayDraftRpc(stateToString(draftState));
         }

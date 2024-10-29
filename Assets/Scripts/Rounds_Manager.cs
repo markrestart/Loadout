@@ -38,6 +38,9 @@ public class Rounds_Manager : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     public void RegisterNameRpc(ulong playerID, string playerName){
+        if(playerName == null || playerName.Length == 0){
+            playerName = $"Player {playerID}";
+        }
         playerNames[playerID] = playerName;
         playerScores[playerID] = 0;
         playersAlive[playerID] = true;
