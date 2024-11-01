@@ -72,7 +72,7 @@ public class Draft_Manager : NetworkBehaviour
 
     private IEnumerator FindReservesController(ulong clientId){
         yield return new WaitForSeconds(1);
-        var reservesController = FindObjectsOfType<Reserves_Controller>().FirstOrDefault(x => x.OwnerClientId == clientId);
+        var reservesController = FindObjectsByType<Reserves_Controller>(FindObjectsSortMode.None).FirstOrDefault(x => x.OwnerClientId == clientId);
         if(reservesController != null){
             reservesControllers.Add(clientId, reservesController);
         }else{
@@ -107,7 +107,11 @@ public class Draft_Manager : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     private void RequestNamesRpc(){
-        Rounds_Manager.Instance.RegisterNameRpc(NetworkManager.Singleton.LocalClientId, Steamworks.SteamClient.Name);
+        if(Steamworks.SteamClient.IsValid){
+            Rounds_Manager.Instance.RegisterNameRpc(NetworkManager.Singleton.LocalClientId, Steamworks.SteamClient.Name);
+        }else{
+            Rounds_Manager.Instance.RegisterNameRpc(NetworkManager.Singleton.LocalClientId, "Player " + NetworkManager.Singleton.LocalClientId);
+        }
     }
 
     [Rpc(SendTo.Everyone)]
@@ -135,6 +139,7 @@ public class Draft_Manager : NetworkBehaviour
 
     [Rpc(SendTo.Everyone)]
     private void SetPlayerSkinsRpc(ulong playerID, int skinIndex, int colorIndex){
+        //TODO: This is where error is occuring for setting player skins
         var reservesController = reservesControllers[playerID];
         reservesController.GetComponent<Player_Skin_Manager>().SetSkin(skinIndex, colorIndex);
     }

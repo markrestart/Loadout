@@ -16,9 +16,14 @@ using System.Collections.Generic;
 public class ConnectionUI_Manager : MonoBehaviour
 {
 	public bool UnityTransportEnabled = false;
+	public bool FacepunchTransportEnabled = true;
     public static ConnectionUI_Manager Instance { get; private set; } = null;
     private FacepunchTransport FPtransport;
 	private UnityTransport Utransport;
+	[SerializeField]
+	private GameObject FPtransportPrefab;
+	[SerializeField]
+	private GameObject UtransportPrefab;
 	public Lobby? CurrentLobby { get; private set; } = null;
     public List<Lobby> Lobbies { get; private set; } = new List<Lobby>(capacity: 100);
 
@@ -27,29 +32,41 @@ public class ConnectionUI_Manager : MonoBehaviour
     [SerializeField]
     private Draft_Manager draftManager;
 
-    private void Start() {
-		if(!UnityTransportEnabled){
-			roomCodeInput.gameObject.SetActive(false);
-			joinButtonRelay.SetActive(false);
-			hostButtonRelay.SetActive(false);
-		}
-        panel.SetActive(true);
+	[SerializeField]
+	private GameObject hostButtonFP;
+	[SerializeField]
+	private GameObject joinButtonFP;
 
-        if(Instance == null){
+    private void Start() {
+		if(Instance == null){
             Instance = this;
         }else{
             Destroy(this);
         }
 
-        FPtransport = NetworkManager.Singleton.GetComponent<FacepunchTransport>();
-		Utransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+		if(!UnityTransportEnabled){
+			roomCodeInput.gameObject.SetActive(false);
+			joinButtonRelay.SetActive(false);
+			hostButtonRelay.SetActive(false);
+		}else{
+			Utransport = Instantiate(UtransportPrefab).GetComponent<UnityTransport>();
+			NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+		}
+		if(!FacepunchTransportEnabled){
+			hostButtonFP.SetActive(false);
+			joinButtonFP.SetActive(false);
+		}else{
+			FPtransport = Instantiate(FPtransportPrefab).GetComponent<FacepunchTransport>();
+			NetworkManager.Singleton.NetworkConfig.NetworkTransport = FPtransport;
 
-        SteamMatchmaking.OnLobbyCreated += OnLobbyCreated;
-        SteamMatchmaking.OnLobbyEntered += OnLobbyEntered;
-        SteamMatchmaking.OnLobbyMemberJoined += OnLobbyMemberJoined;
-        SteamMatchmaking.OnLobbyMemberLeave += OnLobbyMemberLeave;
-        SteamMatchmaking.OnLobbyInvite += OnLobbyInvite;
-        SteamFriends.OnGameLobbyJoinRequested += OnGameLobbyJoinRequested;
+			SteamMatchmaking.OnLobbyCreated += OnLobbyCreated;
+			SteamMatchmaking.OnLobbyEntered += OnLobbyEntered;
+			SteamMatchmaking.OnLobbyMemberJoined += OnLobbyMemberJoined;
+			SteamMatchmaking.OnLobbyMemberLeave += OnLobbyMemberLeave;
+			SteamMatchmaking.OnLobbyInvite += OnLobbyInvite;
+			SteamFriends.OnGameLobbyJoinRequested += OnGameLobbyJoinRequested;
+		}
+        panel.SetActive(true);
     }
     // Host a game using Unity Netcode for GameObjects
     public void HostGame()
@@ -98,6 +115,8 @@ public class ConnectionUI_Manager : MonoBehaviour
 
 	public async void StartHost(uint maxMembers)
 	{
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = FPtransport;
+
 		NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 		NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
 		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
@@ -109,6 +128,8 @@ public class ConnectionUI_Manager : MonoBehaviour
 
 	public void StartClient(SteamId id)
 	{
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = FPtransport;
+
 		NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
 		NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnected;
 
@@ -285,8 +306,6 @@ public class ConnectionUI_Manager : MonoBehaviour
 
 	public async Task<string> StartHostWithRelay()
     {
-		Utransport.enabled = true;
-		FPtransport.enabled = false;
 		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
 
 		NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
@@ -299,15 +318,13 @@ public class ConnectionUI_Manager : MonoBehaviour
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
         Unity.Services.Relay.Models.Allocation allocation = await RelayService.Instance.CreateAllocationAsync(CONSTANTS.MAX_PLAYERS);
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
+        Utransport.SetRelayServerData(new RelayServerData(allocation, "dtls"));
         var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
         return NetworkManager.Singleton.StartHost() ? joinCode : null;
     }
 
     public async Task<bool> StartClientWithRelay()
     {
-		Utransport.enabled = true;
-		FPtransport.enabled = false;
 		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
 
 		NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
@@ -321,7 +338,7 @@ public class ConnectionUI_Manager : MonoBehaviour
         }
 
         var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        Utransport.SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
         return !string.IsNullOrEmpty(joinCode) && NetworkManager.Singleton.StartClient();
     }
 
