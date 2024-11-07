@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Player_Skin_Manager : MonoBehaviour
+public class Player_Skin_Manager : NetworkBehaviour
 {
     [SerializeField]
     private List<Material> skins = new List<Material>();
@@ -11,7 +12,8 @@ public class Player_Skin_Manager : MonoBehaviour
     [SerializeField]
     private SkinnedMeshRenderer playerMesh;
 
-    public void SetSkin(int skinIndex, int colorIndex)
+    [Rpc(SendTo.Everyone)]
+    public void SetSkinRpc(int skinIndex, int colorIndex)
     {
         while(skinIndex >= skins.Count){
             skinIndex -= skins.Count;
@@ -19,8 +21,8 @@ public class Player_Skin_Manager : MonoBehaviour
         while(colorIndex >= skinColors.Count){
             colorIndex -= skinColors.Count;
         }
-        var skin = new Material(skins[Random.Range(0, skins.Count)]);
-        skin.color = skinColors[Random.Range(0, skinColors.Count)];
+        var skin = new Material(skins[skinIndex]);
+        skin.color = skinColors[colorIndex];
         playerMesh.material = skin;
     }
 }

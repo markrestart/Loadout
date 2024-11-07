@@ -115,9 +115,8 @@ public class Rounds_Manager : NetworkBehaviour
         scoreScreen.SetActive(false);
 
         //Go to Equip phase
-                //Put all players into the equiping phase
         foreach(var reservesController in Reserves_Controller.Instances){
-            reservesController.EnterEquipPhase(playerScores.Keys.ToList());
+            reservesController.SyncReserves(playerScores.Keys.ToList(), true);
         }
     }
 

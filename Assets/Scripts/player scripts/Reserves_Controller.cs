@@ -198,12 +198,12 @@ public class Reserves_Controller : NetworkBehaviour
         return cardData.ToArray();
     }
 
-    public void EnterEquipPhase(List<ulong> playerIds)
+    public void SyncReserves(List<ulong> playerIds, bool goToEquipPhase = false)
     {
         //Sync the reserves
         if(IsServer){
             var reserveData = reserves.Select(x => Draft_Manager.Instance.CardToIntArray(x)).ToArray();
-            SyncReserveRPC(reserveDataToString(reserveData), playerIds.ToArray());
+            SyncReserveRPC(reserveDataToString(reserveData), playerIds.ToArray(), goToEquipPhase);
         }
     }
 
@@ -287,7 +287,7 @@ public class Reserves_Controller : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    public void SyncReserveRPC(string reserveData, ulong[] playerIds){
+    public void SyncReserveRPC(string reserveData, ulong[] playerIds, bool goToEquipPhase = false){
         var reserveDataArr = reserveDataFromString(reserveData);
         reserves = new List<Draft_Card>();
         foreach(var cardData in reserveDataArr){
@@ -295,7 +295,7 @@ public class Reserves_Controller : NetworkBehaviour
             reserves.Add(card);
         }
 
-        if(IsOwner){
+        if(IsOwner && goToEquipPhase){
             //unready the player, free the mouse
             transform.GetComponent<Player_Manager>().Unready();
             //display the equip menu

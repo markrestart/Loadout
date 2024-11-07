@@ -118,9 +118,8 @@ public class Draft_Manager : NetworkBehaviour
     void EndDraftRpc(ulong[] playersList){
         //Put all players into the equiping phase
         foreach(var reservesController in reservesControllers){
-            reservesController.Value.EnterEquipPhase(playersList.ToList());
+            reservesController.Value.SyncReserves(playersList.ToList(), true);
         }
-        SetPlayerSkins();
 
         //Disable the draft manager
         draftUI.gameObject.SetActive(false);
@@ -128,20 +127,14 @@ public class Draft_Manager : NetworkBehaviour
 
     private void SetPlayerSkins(){
         if(IsServer){
+            var startingColorIndex = Random.Range(0, 100);
             foreach(var reservesController in reservesControllers){
                 var playerID = reservesController.Key;
                 var skinIndex = Random.Range(0, 100);
-                var colorIndex = (int)playerID;
-                SetPlayerSkinsRpc(playerID, skinIndex, colorIndex);
+                var colorIndex = startingColorIndex + (int)playerID;
+                reservesController.Value.GetComponent<Player_Skin_Manager>().SetSkinRpc(skinIndex, colorIndex);
             }
         }
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void SetPlayerSkinsRpc(ulong playerID, int skinIndex, int colorIndex){
-        //TODO: This is where error is occuring for setting player skins
-        var reservesController = reservesControllers[playerID];
-        reservesController.GetComponent<Player_Skin_Manager>().SetSkin(skinIndex, colorIndex);
     }
 
 //TODO: have the draft rotation alternate between clockwise and counter clockwise
@@ -153,6 +146,10 @@ public class Draft_Manager : NetworkBehaviour
                 draftState[players[i]] = draftState[players[i + 1]];
             }
             draftState[players[players.Count - 1]] = temp;
+
+            foreach(var reservesController in reservesControllers){
+                reservesController.Value.SyncReserves(players);
+            }
 
             SendStateAndDisplayDraftRpc(stateToString(draftState));
             Message_System.AddMessage($"{draftState[NetworkManager.Singleton.LocalClientId].Count} cards left to draft");
@@ -175,6 +172,7 @@ public class Draft_Manager : NetworkBehaviour
         if(readyState.Values.All(x => x == true)){
             if(draftState[players[0]].Count == 0){
                 EndDraftRpc(players.ToArray());
+                SetPlayerSkins();
             }else{
                 readyState = readyState.ToDictionary(x => x.Key, x => false);
                 RotateDraft();
