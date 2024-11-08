@@ -187,7 +187,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
             GetComponent<PlayerUI_Manager>().SetInGameUIActive(!isSpecating);
             if(isSpecating){
                 Spectator_Movement.Instance.StartSpectating(playerCameraPosition);
-                var cam = playerCameraPosition.GetComponentInChildren<Camera>().transform.parent;
+                var cam = playerCameraPosition.GetComponentInChildren<Camera>().transform;
                 if(cam != null){
                     cam.parent = Spectator_Movement.Instance.transform;
                 }
@@ -195,7 +195,9 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
                 Spectator_Movement.Instance.StopSpectating();
                 var cam = Spectator_Movement.Instance.GetComponentInChildren<Camera>();
                 if(cam != null){
-                    cam.transform.parent = null;
+                    cam.transform.parent = playerCameraPosition;
+                    cam.transform.localPosition = Vector3.zero;
+                    cam.transform.localRotation = Quaternion.identity;
                 }
             }
         }
