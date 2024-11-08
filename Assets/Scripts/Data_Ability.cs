@@ -14,8 +14,6 @@ public class Data_Ability
     private float cooldownMultiplier = 1;
 
     public AudioClip activateSound;
-    //TODO: add logic for looping and deactivating sounds
-    public AudioClip loopingSound;
     public AudioClip deactivateSound;
 
     public Data_Ability(SO_Ability scriptableAbility){
@@ -25,7 +23,6 @@ public class Data_Ability
         this.values = scriptableAbility.values;
         this.action = scriptableAbility.action;
         this.activateSound = scriptableAbility.activateSound;
-        this.loopingSound = scriptableAbility.loopingSound;
         this.deactivateSound = scriptableAbility.deactivateSound;
     }
 
@@ -53,7 +50,7 @@ public class Data_Ability
         lastActivationTime = Time.time;
         switch(action){
             case AbilityActions.Invisable:
-                playerManager.GoInvisable(values[0]);
+                playerManager.GoInvisable(values[0], deactivateSound);
                 break;
             case AbilityActions.Health:
                 playerManager.Heal((int)values[0]);
@@ -62,13 +59,13 @@ public class Data_Ability
                 playerManager.GoToSpawnPoint();
                 break;
             case AbilityActions.Shield:
-                playerManager.Shield(values[0], values[1]);
+                playerManager.Shield(values[0], values[1], deactivateSound);
                 break;
             case AbilityActions.FireRateBoost:
-                playerManager.FireRateBoost(values[0], values[1]);
+                playerManager.FireRateBoost(values[0], values[1], deactivateSound);
                 break;
             case AbilityActions.DamageBoost:
-                playerManager.DamageBoost(values[0], values[1]);
+                playerManager.DamageBoost(values[0], values[1], deactivateSound);
                 break;
             case AbilityActions.Jump:
                 playerManager.AbilityJump(values[0]);

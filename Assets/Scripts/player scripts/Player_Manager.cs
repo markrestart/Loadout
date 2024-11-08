@@ -39,8 +39,6 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     [SerializeField]
     private PlayerUI_Manager playerUIManager;
     [SerializeField]
-    private AudioSource walkingSound;
-    [SerializeField]
     private AudioSource weaponSound;
     [SerializeField]
     private AudioSource abilitySound;
@@ -239,17 +237,17 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         }
     }
 
-    public void GoInvisable(float time)
+    public void GoInvisable(float time, AudioClip deactivateSound)
     {
         if(!IsOwner){
             playerModel.SetActive(false);
         }else{
             effects[0].SetActive(true);
         }
-        StartCoroutine(InvisableTimer(time));
+        StartCoroutine(InvisableTimer(time, deactivateSound));
     }
 
-    private IEnumerator InvisableTimer(float time)
+    private IEnumerator InvisableTimer(float time, AudioClip deactivateSound)
     {
         if(!IsOwner){
             yield return new WaitForSeconds(time);
@@ -257,20 +255,24 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         }else{
             yield return new WaitForSeconds(time);
             effects[0].SetActive(false);
+            if(deactivateSound != null){
+                AbilitySound.clip = deactivateSound;
+                AbilitySound.Play();
+            }
         }
     }
 
     private int isShielded = 0;
     private float shieldLimit = 0;
-    public void Shield(float time, float limit)
+    public void Shield(float time, float limit, AudioClip deactivateSound)
     {
         effects[3].SetActive(true);
         isShielded++;
         shieldLimit += limit;
-        StartCoroutine(ShieldTimer(time));
+        StartCoroutine(ShieldTimer(time, deactivateSound));
     }
 
-    private IEnumerator ShieldTimer(float time)
+    private IEnumerator ShieldTimer(float time, AudioClip deactivateSound)
     {
         yield return new WaitForSeconds(time);
         isShielded--;
@@ -278,40 +280,52 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         {
             shieldLimit = 0;
             effects[3].SetActive(false);
+            if(deactivateSound != null){
+                AbilitySound.clip = deactivateSound;
+                AbilitySound.Play();
+            }
         }
     }
 
-    public void DamageBoost(float time, float multiplier)
+    public void DamageBoost(float time, float multiplier, AudioClip deactivateSound)
     {
         effects[1].SetActive(true);
         GetComponent<Action_Handler>().DamageMultiplier *= multiplier;
-        StartCoroutine(DamageBoostTimer(time, multiplier));
+        StartCoroutine(DamageBoostTimer(time, multiplier, deactivateSound));
     }
 
-    private IEnumerator DamageBoostTimer(float time, float multiplier)
+    private IEnumerator DamageBoostTimer(float time, float multiplier, AudioClip deactivateSound)
     {
         yield return new WaitForSeconds(time);
         GetComponent<Action_Handler>().DamageMultiplier /= multiplier;
         if(GetComponent<Action_Handler>().DamageMultiplier == 1)
         {
             effects[1].SetActive(false);
+            if(deactivateSound != null){
+                AbilitySound.clip = deactivateSound;
+                AbilitySound.Play();
+            }
         }
     }
 
-    public void FireRateBoost(float time, float multiplier)
+    public void FireRateBoost(float time, float multiplier, AudioClip deactivateSound)
     {
         effects[2].SetActive(true);
         GetComponent<Action_Handler>().FireRateMultiplier *= multiplier;
-        StartCoroutine(FireRateBoostTimer(time, multiplier));
+        StartCoroutine(FireRateBoostTimer(time, multiplier, deactivateSound));
     }
 
-    private IEnumerator FireRateBoostTimer(float time, float multiplier)
+    private IEnumerator FireRateBoostTimer(float time, float multiplier, AudioClip deactivateSound)
     {
         yield return new WaitForSeconds(time);
         GetComponent<Action_Handler>().FireRateMultiplier /= multiplier;
         if(GetComponent<Action_Handler>().FireRateMultiplier == 1)
         {
             effects[2].SetActive(false);
+            if(deactivateSound != null){
+                AbilitySound.clip = deactivateSound;
+                AbilitySound.Play();
+            }
         }
     }
 

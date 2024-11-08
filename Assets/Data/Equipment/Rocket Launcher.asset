@@ -25,6 +25,7 @@ MonoBehaviour:
   isAutomatic: 1
   activationRate: 3
   weight: 88
-  fireSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  equipSound: {fileID: 0}
+  fireSound: {fileID: 8300000, guid: a1732e48cf662fc4090facf38b470a99, type: 3}
+  reloadSound: {fileID: 8300000, guid: 637e20d050c5ae543bf51388f8f1faf2, type: 3}
+  equipSound: {fileID: 8300000, guid: 42321e5846e61c44ba561f9b3d499f70, type: 3}
+  avEffect: 0

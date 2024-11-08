@@ -13,12 +13,19 @@ public class Step_Sound_Maker : MonoBehaviour
     
     private Vector3 lastStepPosition;
     private float stepCoolDown;
+	CharacterController characterController;
+	// Start is called before the first frame update
+	void Start()
+	{
+		characterController = GetComponent<CharacterController>();
+		lastStepPosition = transform.position;
+	}
 
  
 	// Update is called once per frame
 	void Update () {
 		stepCoolDown -= Time.deltaTime;
-		if ((Vector3.Distance(lastStepPosition, transform.position) > minStepDistance) && stepCoolDown < 0f){
+		if ((Vector3.Distance(lastStepPosition, transform.position) > minStepDistance) && stepCoolDown < 0f && characterController.isGrounded) {
 			audioSource.pitch = 1f + Random.Range (-0.2f, 0.2f);
 			audioSource.Play();
 			stepCoolDown = stepRate;
