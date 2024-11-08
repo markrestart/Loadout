@@ -95,10 +95,6 @@ public class Rounds_Manager : NetworkBehaviour
         }
         scoreScreen.SetActive(true);
 
-        foreach(var reservesController in Reserves_Controller.Instances){
-            reservesController.ResetRound(playersAlive[reservesController.NetworkObject.OwnerClientId]);
-        }
-
         if(currentRound < 3){
             StartCoroutine(EndRoundTimer());
         }
@@ -110,6 +106,10 @@ public class Rounds_Manager : NetworkBehaviour
     private IEnumerator EndRoundTimer(){
         //Countdown to next round
         yield return new WaitForSeconds(CONSTANTS.END_OF_ROUND_DELAY);
+
+        foreach(var reservesController in Reserves_Controller.Instances){
+            reservesController.ResetRound(playersAlive[reservesController.NetworkObject.OwnerClientId]);
+        }
 
         //Hide score screen
         scoreScreen.SetActive(false);

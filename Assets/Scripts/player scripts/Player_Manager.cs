@@ -23,6 +23,10 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     [SerializeField]
     private List<GameObject> effects;
     private Transform spawnPointsParent;
+    [SerializeField]
+    private Animator animator;
+    [SerializeField]
+    private Transform playerCameraPosition;
 
     private float playerHealth;
     private float armor;
@@ -179,13 +183,43 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     public void SetIsSpecating(bool isSpecating)
     {
         isReady = !isSpecating;
-        playerModel.SetActive(!isSpecating);
+        //playerModel.SetActive(!isSpecating);
         playerWeaponModel.SetActive(!isSpecating);
         if(IsOwner){
             GetComponent<PlayerUI_Manager>().SetInGameUIActive(!isSpecating);
+            if(isSpecating){
+                Spectator_Movement.Instance.StartSpectating(playerCameraPosition);
+                var cam = playerCameraPosition.GetComponentInChildren<Camera>().transform.parent;
+                if(cam != null){
+                    cam.parent = Spectator_Movement.Instance.transform;
+                }
+            }else{
+                Spectator_Movement.Instance.StopSpectating();
+                var cam = Spectator_Movement.Instance.GetComponentInChildren<Camera>();
+                if(cam != null){
+                    cam.transform.parent = null;
+                }
+            }
         }
         if(isSpecating){
-            GoToPosition(new Vector3(0, CONSTANTS.OUT_OF_BOUNDS_HEIGHT, 0));
+            // Turn off the collider
+            GetComponent<CharacterController>().enabled = false;
+            GetComponent<CapsuleCollider>().enabled = false;
+
+            // turn off the animator
+            animator.enabled = false;
+
+            //turn on the ragdoll
+            GetComponent<Ragdoll_Controller>().EnableRagdoll();
+        }else{
+            gameObject.GetComponent<CharacterController>().enabled = true;
+            GetComponent<CapsuleCollider>().enabled = true;
+
+            // turn on the animator
+            animator.enabled = true;
+
+            //turn off the ragdoll
+            GetComponent<Ragdoll_Controller>().DisableRagdoll();
         }
     }
 
