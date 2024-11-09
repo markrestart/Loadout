@@ -131,6 +131,11 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         TakeDamageRpc(damage, sourceID);
     }
 
+    public void ApplyForce(Vector3 force)
+    {
+        GetComponent<Player_Movement_Controller>().AddForce(force);
+    }
+
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage, ulong sourceID) 
     {

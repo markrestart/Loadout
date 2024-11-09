@@ -17,3 +17,5 @@ MonoBehaviour:
   action: 2
   values: []
   cooldown: 40
+  activateSound: {fileID: 8300000, guid: 99ac655108890b9a3bddc364bce07649, type: 3}
+  deactivateSound: {fileID: 0}

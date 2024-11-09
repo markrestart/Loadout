@@ -19,3 +19,5 @@ MonoBehaviour:
   - 2
   - 1000
   cooldown: 10
+  activateSound: {fileID: 8300000, guid: 6af25d2284cbf9d1aa1a19af3aea2749, type: 3}
+  deactivateSound: {fileID: 8300000, guid: f0b2d5d365943859b9bfcae7b4f99ccf, type: 3}

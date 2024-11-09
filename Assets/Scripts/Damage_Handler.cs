@@ -10,6 +10,11 @@ public class Damage_Handler : MonoBehaviour
     {
         damageTaker.TakeDamage(damage, sourceID);
     }
+
+    public void ApplyForce(Vector3 force)
+    {
+        damageTaker.ApplyForce(force);
+    }
     private void Start() {
         damageTaker = GetComponent<ITakes_Damage>();
     }

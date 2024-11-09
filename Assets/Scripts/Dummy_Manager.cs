@@ -15,6 +15,11 @@ public class Dummy_Manager : NetworkBehaviour, ITakes_Damage
         TakeDamageRpc(damage);
     }
 
+    public void ApplyForce(Vector3 force)
+    {
+        transform.position += force;
+    }
+
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage)
     {
