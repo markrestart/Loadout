@@ -4436,8 +4436,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99375356d7e712168aab7483e95327a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnityTransportEnabled: 1
-  FacepunchTransportEnabled: 0
+  UnityTransportEnabled: 0
+  FacepunchTransportEnabled: 1
   FPtransportPrefab: {fileID: 3875283884651147573, guid: c73001de0b0ef28b3a1461d234bb2a3f, type: 3}
   UtransportPrefab: {fileID: 1029232161591607536, guid: b306d2b19c75d1521b31b6a8a09ea01a, type: 3}
   panel: {fileID: 862143766}

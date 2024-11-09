@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Rocket Launcher
   m_EditorClassIdentifier: 
   equipmentName: Rocket Launcher
-  description: Two one hit kill rockets. Make them count.
+  description: One rocket with massive damage. Make it count.
   equipmentType: 0
   equipmentModel: 4
   ammoType: 4
   magazineSize: 1
   reloadTime: 5
-  damage: 120
+  damage: 90
   isHitscan: 0
   projectile: 2
   isAutomatic: 1
