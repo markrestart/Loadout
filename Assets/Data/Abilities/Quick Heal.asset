@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Quick Heal
   m_EditorClassIdentifier: 
   abilityName: Quick Heal
-  description: Gain 5 health. 20 second cooldown
+  description: Gain 5 health. 30 second cooldown
   action: 1
   values:
   - 5

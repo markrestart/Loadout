@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FullAuto
   m_EditorClassIdentifier: 
   equipmentName: Automatic Rifle
-  description: point and shoot
+  description: Fires 2 bullets per second. Comes with 60 bullets.
   equipmentType: 0
   equipmentModel: 2
   ammoType: 2

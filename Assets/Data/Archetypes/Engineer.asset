@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: Engineer
   m_EditorClassIdentifier: 
   archetypeName: Engineer
-  description: Bring it all with you.
-  walkingSpeedModifier: 0.8
-  runningSpeedModifier: 0.6
+  description: A truly insane amount of pockets. Carries 3X the base amount of equipment.
+    The weight makes you a little shorter, and not able to jump as high. Also does
+    less melee damage.
+  walkingSpeedModifier: 1
+  runningSpeedModifier: 1
   jumpSpeedModifier: 0.5
   hitboxSizeModifier: {x: 1.2, y: 0.7, z: 1}
-  meleeModifier: 1.5
+  meleeModifier: 0.5
   health: 100
-  carryWeight: 200
+  carryWeight: 300
   abilitySlots: 1
   abilityCooldownModifier: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   equipmentName: Pistol
-  description: pow pow. 12 bullets.
+  description: Slow, but packs a punch. Comes with 12 bullets.
   equipmentType: 0
   equipmentModel: 1
   ammoType: 2

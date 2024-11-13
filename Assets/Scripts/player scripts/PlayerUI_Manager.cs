@@ -37,6 +37,7 @@ public class PlayerUI_Manager : MonoBehaviour
 
     public void Ready(){
         SetInGameUIActive(true);
+        damageOpacity = 0;
         damageIndicatorOverlay.color = new Color(1, 0, 0, 0);
         hitConfirmIndicator.color = new Color(1, 1, 1, 0);
     }

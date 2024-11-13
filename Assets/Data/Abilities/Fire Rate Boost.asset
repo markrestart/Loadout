@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Fire Rate Boost
   m_EditorClassIdentifier: 
   abilityName: Overclock
-  description: Fire 10% faster for 20 seconds. 60 second cooldown
+  description: Fire 10% faster for 20 seconds. 30 second cooldown
   action: 6
   values:
   - 20
   - 1.1
-  cooldown: 60
+  cooldown: 30
   activateSound: {fileID: 8300000, guid: d14c0cd976188d89daeb62d338260f1f, type: 3}
   deactivateSound: {fileID: 0}

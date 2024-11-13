@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Beefy
   m_EditorClassIdentifier: 
   archetypeName: Beefy
-  description: Big and slow, but with higher health and improved melee damage
+  description: Big and slow, but with higher health and improved melee damage. Can
+    also carry a bit more.
   walkingSpeedModifier: 0.8
   runningSpeedModifier: 0.8
   jumpSpeedModifier: 0.9
-  hitboxSizeModifier: {x: 1.1, y: 1, z: 1.1}
+  hitboxSizeModifier: {x: 1.2, y: 1.1, z: 1.2}
   meleeModifier: 1.5
   health: 120
   carryWeight: 120

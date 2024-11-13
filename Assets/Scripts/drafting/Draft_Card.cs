@@ -158,7 +158,7 @@ public class Draft_Card
                 case DraftCardType.Archetype:
                     return archetype.description;
                 case DraftCardType.Armor:
-                    return $"Armor that provides protection from ${armor} damage";
+                    return $"Armor that provides protection from {armor} damage";
                 default:
                     return "";
             }

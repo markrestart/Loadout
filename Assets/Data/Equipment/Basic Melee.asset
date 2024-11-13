@@ -19,7 +19,7 @@ MonoBehaviour:
   ammoType: 0
   magazineSize: 0
   reloadTime: 0
-  damage: 5
+  damage: 15
   isHitscan: 1
   projectile: 0
   isAutomatic: 0

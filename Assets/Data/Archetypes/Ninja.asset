@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   archetypeName: Ninja
   description: One who carries no weapons. You must rely only on your fists and abilities.
+    Does 4X melee damage and can move around the arena with ease.
   walkingSpeedModifier: 2
   runningSpeedModifier: 2
   jumpSpeedModifier: 3

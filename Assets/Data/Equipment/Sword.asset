@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   equipmentName: Sword
-  description: Swish swich. Melee
+  description: A stronger melee weapon. No need for ammo or reloading.
   equipmentType: 1
   equipmentModel: 3
   ammoType: 0
@@ -23,8 +23,8 @@ MonoBehaviour:
   isHitscan: 1
   projectile: 0
   isAutomatic: 0
-  activationRate: 0.6
-  weight: 50
+  activationRate: 1
+  weight: 20
   fireSound: {fileID: 8300000, guid: e21ca737df9f06348ac2001c0933d2d5, type: 3}
   reloadSound: {fileID: 8300000, guid: e942ad6fccd695c439157bb3d0cec872, type: 3}
   equipSound: {fileID: 8300000, guid: 2d20b6f99e939d84297803f7286fc6da, type: 3}

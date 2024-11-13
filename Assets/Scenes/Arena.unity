@@ -2136,12 +2136,12 @@ MonoBehaviour:
   m_text: "\tLoadout is a resource based, drafting shooter. At the start of a match,
     you will draft all your Archetypes, Equipment, and Abilities. You will then go
     through 3 rounds of arena elimination. There you can earn points in multiple
-    ways; dealing damage, eliminating and outllasting others, and collecting coins.
+    ways; dealing damage, eliminating and outlasting others, and collecting coins.
     The player with the most points after three rounds wins.\n\tBetween each round
     you can equip from what you drafted. Archetypes can be reused between rounds,
-    but you can only have one at a time. Equipment is lost at the end of a round,
-    but the survivor keeps their weapons with a full reload. Abilities are always
-    lost at the end of the round."
+    but you can only have one at a time. The survivor of a round loses all their
+    equipment, but everyone else keeps their weapons with a full reload. Abilities
+    are lost at the end of the round."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4436,8 +4436,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99375356d7e712168aab7483e95327a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnityTransportEnabled: 0
-  FacepunchTransportEnabled: 1
+  UnityTransportEnabled: 1
+  FacepunchTransportEnabled: 0
   FPtransportPrefab: {fileID: 3875283884651147573, guid: c73001de0b0ef28b3a1461d234bb2a3f, type: 3}
   UtransportPrefab: {fileID: 1029232161591607536, guid: b306d2b19c75d1521b31b6a8a09ea01a, type: 3}
   panel: {fileID: 862143766}
@@ -6268,7 +6268,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2ad298872d4b99106addafb950405625, type: 2}
   - {fileID: 11400000, guid: 508da9ae9785e78e7a315dc0f83edd0c, type: 2}
   - {fileID: 11400000, guid: 74dca45893fe776a5a39b8d3e669b5f9, type: 2}
-  - {fileID: 11400000, guid: f473a00d79a234603b8f77b3aca5b05e, type: 2}
   - {fileID: 11400000, guid: 635b6343fa925ca8ebcc486d1a2d60f0, type: 2}
   - {fileID: 11400000, guid: aadd2666118de1d8983f2edad82fa2e5, type: 2}
   ArmorPool: 050000000a000000190000002800000032000000

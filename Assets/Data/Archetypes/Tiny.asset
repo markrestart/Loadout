@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Tiny
   m_EditorClassIdentifier: 
   archetypeName: Tiny
-  description: High survivability. Low damage
+  description: Fast and small, making you hard to hit. But can carry half as much
+    equipment.
   walkingSpeedModifier: 1
   runningSpeedModifier: 1.5
   jumpSpeedModifier: 2

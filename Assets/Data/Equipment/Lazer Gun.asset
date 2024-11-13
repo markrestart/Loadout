@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lazer Gun
   m_EditorClassIdentifier: 
   equipmentName: Lazer Gun
-  description: point and shoot
+  description: Zippy weapon that does a lot of little damage. Comes with 150 energy.
   equipmentType: 0
   equipmentModel: 6
   ammoType: 5

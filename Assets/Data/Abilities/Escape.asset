@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Escape
   m_EditorClassIdentifier: 
   abilityName: Escape!
-  description: Teleport to a (probably) unoccupied area of the map. 40 second cooldown.
+  description: Teleport back to one of the spawn points. 40 second cooldown.
   action: 2
   values: []
   cooldown: 40
