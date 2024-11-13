@@ -81,7 +81,10 @@ public class Action_Handler : NetworkBehaviour
 
         if(Input.GetButtonDown("CycleEquipment")){
             //Get the next equipment in the list, or the first if at the end
-            activeEquipment = playerManager.Equipments[(playerManager.Equipments.IndexOf(activeEquipment) + 1) % playerManager.Equipments.Count];
+            do{
+                activeEquipment = playerManager.Equipments[(playerManager.Equipments.IndexOf(activeEquipment) + 1) % playerManager.Equipments.Count];
+            }while(activeEquipment.ammoType != AmmoType.NA && playerManager.AmmoCount(activeEquipment.ammoType) == 0 && activeEquipment.CurrentAmmo == 0);
+            
             SyncEquipmentRpc((ushort)playerManager.Equipments.IndexOf(activeEquipment));
         }
 
