@@ -69,14 +69,16 @@ public enum AmmoType {
     Bullet,
     Shell,
     Rocket,
-    Energy
+    Energy,
+    Explosive
 }
 
 public enum ProjectileType {
     NA,
     Granade,
     Rocket,
-    Arrow
+    Arrow,
+    Mine
 }
 
 public enum EquipmentModel {
