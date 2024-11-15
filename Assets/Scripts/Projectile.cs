@@ -16,6 +16,11 @@ public class Projectile : MonoBehaviour
     private bool destroyOnHit = true;
     [SerializeField]
     private bool destroyOnTime = true;
+    [SerializeField]
+    private bool destroyOnTrigger = true;
+    [SerializeField]
+    private float timeToSet = 0.0f;
+    private bool isSet = false;
 
     public void SetDamage(float damage)
     {
@@ -33,19 +38,37 @@ public class Projectile : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision other) {
+        if(!destroyOnHit){
+            return;
+        }
         if(other.gameObject.GetComponent<Damage_Handler>()){
             other.gameObject.GetComponent<Damage_Handler>().TakeDamage(damage, sourceID);
         }
         Destroy(gameObject);
     }
 
-    private void Update() {
-        if(!destroyOnTime){
+    private void OnTriggerEnter(Collider other) {
+        if(!destroyOnTrigger || isSet == false){
             return;
         }
-        timeToLive -= Time.deltaTime;
-        if(timeToLive <= 0){
+        if(other.gameObject.GetComponent<Damage_Handler>()){
             Destroy(gameObject);
+        }
+    }
+
+    private void Update() {
+        if(destroyOnTime){
+            timeToLive -= Time.deltaTime;
+            if(timeToLive <= 0){
+                Destroy(gameObject);
+            }
+        }
+
+        if(timeToSet > 0){
+            timeToSet -= Time.deltaTime;
+            if(timeToSet <= 0){
+                isSet = true;
+            }
         }
     }
 

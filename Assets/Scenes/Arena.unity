@@ -6187,6 +6187,10 @@ MonoBehaviour:
     prefab: {fileID: 3139182890032729805, guid: 4bfcfdaeb287e481aa6834dbaab354cd, type: 3}
   - type: 2
     prefab: {fileID: 3139182890032729805, guid: ec664ebad9d8717bfa9b1e0403680a78, type: 3}
+  - type: 1
+    prefab: {fileID: 994600861472780457, guid: 77c0a4924a2aea08fae8bc995ca22e13, type: 3}
+  - type: 4
+    prefab: {fileID: 3814579874391774834, guid: 29587394bce8fc787b622c63917eb9cd, type: 3}
   avEffectPrefabs:
   - type: 2
     prefab: {fileID: 2072758854777685123, guid: 4c336f13eb27b4601a25f20a7b23c4f1, type: 3}
@@ -6253,6 +6257,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2985eb0ecbc85e15ab5e87d180c82a4d, type: 2}
   - {fileID: 11400000, guid: 375aed6f0d91983b7803b3738aedab2c, type: 2}
   - {fileID: 11400000, guid: 9d22d8ee8d90904bd8a1d62a77b73f37, type: 2}
+  - {fileID: 11400000, guid: eb65ed4b4279bb98c9fc183b80de646a, type: 2}
+  - {fileID: 11400000, guid: e9deb5515328dcc379dc55421755b7f4, type: 2}
   AbilityPool:
   - {fileID: 11400000, guid: b0a8e86031516d0429134ba7f9586e1d, type: 2}
   - {fileID: 11400000, guid: beaf597e0336b11c28635d008e4bb7a2, type: 2}
@@ -6271,7 +6277,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 635b6343fa925ca8ebcc486d1a2d60f0, type: 2}
   - {fileID: 11400000, guid: aadd2666118de1d8983f2edad82fa2e5, type: 2}
   ArmorPool: 050000000a000000190000002800000032000000
-  AmmoPool: 01000000020000000500000004000000
+  AmmoPool:
+  - ammoType: 1
+    minAmount: 10
+    maxAmount: 50
+  - ammoType: 2
+    minAmount: 12
+    maxAmount: 120
+  - ammoType: 4
+    minAmount: 1
+    maxAmount: 4
+  - ammoType: 5
+    minAmount: 100
+    maxAmount: 1000
+  - ammoType: 6
+    minAmount: 3
+    maxAmount: 10
   cardManagers:
   - {fileID: 65284395}
   - {fileID: 40919616}

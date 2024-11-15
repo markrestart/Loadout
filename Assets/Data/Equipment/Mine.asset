@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc81f93f839db9b9e871aefdd0b7192d, type: 3}
-  m_Name: Granade
+  m_Name: Mine
   m_EditorClassIdentifier: 
-  equipmentName: Granade
-  description: 5 granades. Can be reloaded with Explosive ammo type.
+  equipmentName: Mine
+  description: 3 mines. Explodes when a player comes near. Can be reloaded with Explosive
+    ammo type.
   equipmentType: 0
   equipmentModel: 0
   ammoType: 6
-  magazineSize: 5
+  magazineSize: 3
   reloadTime: 3
   damage: 5
   isHitscan: 0
-  projectile: 1
+  projectile: 4
   isAutomatic: 0
   activationRate: 1
   weight: 10

@@ -11,7 +11,7 @@ public class Draft_Manager : NetworkBehaviour
     public List<SO_Ability> AbilityPool;
     public List<SO_Archetype> ArchetypePool;
     public List<int> ArmorPool;
-    public List<AmmoType> AmmoPool;
+    public List<DraftableAmmo> AmmoPool;
     [SerializeField]
     private List<Card_Manager> cardManagers;
     [SerializeField]
@@ -325,32 +325,32 @@ public class Draft_Manager : NetworkBehaviour
             }else if(percent <= 0.7f){
                 //Ammo TODO: Hardcoded ammo amounts should be replaced with a more dynamic system
                 var amount = 0;
-                List<AmmoType> RestrictedAmmoPool = new List<AmmoType>(AmmoPool);
-                foreach(AmmoType a in AmmoPool){
+                List<DraftableAmmo> RestrictedAmmoPool = new List<DraftableAmmo>(AmmoPool);
+                foreach(DraftableAmmo a in AmmoPool){
                     //If the ammo type is not on a weapon that has been added to the draft pool, remove it
-                    if(!draftCards.Any(x => x.EType == DraftCardType.Equipment && x.Equipment.ammoType == a)){
+                    if(!draftCards.Any(x => x.EType == DraftCardType.Equipment && x.Equipment.ammoType == a.ammoType)){
                         RestrictedAmmoPool.Remove(a);
                     }
                 }
-                var ammoType = RestrictedAmmoPool[UnityEngine.Random.Range(0, RestrictedAmmoPool.Count)];
-                switch(ammoType){
+                var ammo= RestrictedAmmoPool[UnityEngine.Random.Range(0, RestrictedAmmoPool.Count)];
+                switch(ammo.ammoType){
                     case AmmoType.Bullet:
-                        amount = UnityEngine.Random.Range(30, 100);
+                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
                         break;
                     case AmmoType.Shell:
-                        amount = UnityEngine.Random.Range(5, 20);
+                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
                         break;
                     case AmmoType.Rocket:
-                        amount = UnityEngine.Random.Range(1, 3);
+                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
                         break;
                     case AmmoType.Energy:
-                        amount = UnityEngine.Random.Range(50, 200);
+                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
                         break;
                     case AmmoType.Arrow:
-                        amount = UnityEngine.Random.Range(10, 30);
+                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
                         break;
                 }
-                draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammoType, amount)));
+                draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammo.ammoType, amount)));
             }else if(percent <= 0.9f){
                 //Ability
                 draftCards.Add(new Draft_Card(new Data_Ability(AbilityPool[UnityEngine.Random.Range(0, AbilityPool.Count)])));
@@ -361,5 +361,12 @@ public class Draft_Manager : NetworkBehaviour
         }
         return draftCards;
     }
+}
+
+[System.Serializable]
+public class DraftableAmmo{
+    public AmmoType ammoType;
+    public int minAmount;
+    public int maxAmount;
 }
 
