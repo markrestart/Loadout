@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -25,6 +26,7 @@ public class PlayerUI_Manager : MonoBehaviour
     private GameObject inGameUI;
     [SerializeField]
     private DamageIndicatorDetails IndicatorDetails;
+    private DamageType lastDamageType = DamageType.normal;
 
     private Player_Manager playerManager;
     private Action_Handler actionHandler;
@@ -47,7 +49,9 @@ public class PlayerUI_Manager : MonoBehaviour
     }
 
     private float damageOpacity = 0;
-    public void addDamage(float damage){
+    public void addDamage(float damage, DamageType damageType = DamageType.normal){
+        lastDamageType = damageType;
+
         if (damage < IndicatorDetails.MIN_DAMAGE_ADD_VALUE){
             damage = IndicatorDetails.MIN_DAMAGE_ADD_VALUE;
         }
@@ -73,8 +77,14 @@ public class PlayerUI_Manager : MonoBehaviour
         }
 
         if(damageOpacity > 1){
+            Console.WriteLine(lastDamageType);
             damageOpacity = math.lerp(damageOpacity, 0, IndicatorDetails.DAMAGE_INDICATOR_FADE_SPEED * Time.deltaTime);
-            damageIndicatorOverlay.color = new Color(1, 0, 0, damageOpacity / IndicatorDetails.MAX_DAMAGE_INDICATOR_VALUE * IndicatorDetails.MAX_DAMAGE_INDICATOR_OPACITY);
+            damageIndicatorOverlay.color = new Color(
+                lastDamageType == DamageType.normal ? 1:0,
+                lastDamageType == DamageType.armor ? 1:0,
+                lastDamageType == DamageType.shielded ? 1:0,
+                damageOpacity / IndicatorDetails.MAX_DAMAGE_INDICATOR_VALUE * IndicatorDetails.MAX_DAMAGE_INDICATOR_OPACITY
+        );
         }else{
             damageIndicatorOverlay.color = new Color(1, 0, 0, 0);
         }
@@ -122,6 +132,12 @@ public class PlayerUI_Manager : MonoBehaviour
             abilityCooldownText.text = "";
         }
     }
+}
+
+public enum DamageType{
+    normal,
+    shielded,
+    armor,
 }
 
 [System.Serializable]

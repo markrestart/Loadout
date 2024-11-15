@@ -139,14 +139,12 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     [Rpc(SendTo.Everyone)]
     public void TakeDamageRpc(float damage, ulong sourceID) 
     {
-        //TODO: Add damage indication for shielded and armor damage
-        playerUIManager.addDamage(math.ceil(damage));
-
         //TODO: Re-architect this absolutely disgusting code
         Reserves_Controller.Instances.Where(x => x.OwnerClientId == sourceID).FirstOrDefault().PlayerManager.playerUIManager.DisplayHitConfirm();
 
         if(isShielded > 0)
         {
+            playerUIManager.addDamage(math.ceil(damage), DamageType.shielded);
             shieldLimit -= damage;
             if(shieldLimit <= 0)
             {
@@ -164,6 +162,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         
         if(armor > 0)
         {
+            playerUIManager.addDamage(math.ceil(damage), DamageType.armor);
             armor -= damage;
             if(armor < 0)
             {
@@ -173,6 +172,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
         }
         else
         {
+            playerUIManager.addDamage(math.ceil(damage), DamageType.normal);
             playerHealth -= damage;
         }
         if(playerHealth <= 0)
