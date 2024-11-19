@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.InputSystem;
 
 public class Action_Handler : NetworkBehaviour
 {
@@ -35,6 +36,19 @@ public class Action_Handler : NetworkBehaviour
         }
      } }
 
+    private InputAction fireInput;
+    private InputAction abilityInput;
+    private InputAction cycleEquipmentInput;
+    private InputAction cycleAbilityInput;
+
+    private void Start()
+    {
+        fireInput = InputSystem.actions.FindAction("Fire");
+        abilityInput = InputSystem.actions.FindAction("Ability");
+        cycleEquipmentInput = InputSystem.actions.FindAction("Cycle Equipment");
+        cycleAbilityInput = InputSystem.actions.FindAction("Cycle Ability");
+    }
+
     private void Awake()
     {
         playerManager = GetComponent<Player_Manager>();
@@ -63,15 +77,15 @@ public class Action_Handler : NetworkBehaviour
         if(!playerManager.IsReady){
             return;
         }
-        if(Input.GetButton("Fire1"))
+        if(fireInput.IsPressed())
         {
             if(activeEquipment != null)
             {
-                FireWeaponRpc(Input.GetButtonDown("Fire1"));
+                FireWeaponRpc(fireInput.triggered);
             }
         }
 
-        if(Input.GetButtonDown("Ability")){
+        if(abilityInput.triggered){
             if(activeAbility != null)
             {
                 //TODO: Some abilities may not need to be sent as an rpc(Like movement abilities)
@@ -79,7 +93,7 @@ public class Action_Handler : NetworkBehaviour
             }
         }
 
-        if(Input.GetButtonDown("CycleEquipment")){
+        if(cycleEquipmentInput.triggered){
             //Get the next equipment in the list, or the first if at the end
             do{
                 activeEquipment = playerManager.Equipments[(playerManager.Equipments.IndexOf(activeEquipment) + 1) % playerManager.Equipments.Count];
@@ -88,7 +102,7 @@ public class Action_Handler : NetworkBehaviour
             SyncEquipmentRpc((ushort)playerManager.Equipments.IndexOf(activeEquipment));
         }
 
-        if(Input.GetButtonDown("CycleAbility")){
+        if(cycleAbilityInput.triggered){
             //Get the next ability in the list, or the first if at the end
             if(playerManager.Abilities.Count > 1)
             {

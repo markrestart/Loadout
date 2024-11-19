@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Spectator_Movement : MonoBehaviour
 {
@@ -10,6 +11,11 @@ public class Spectator_Movement : MonoBehaviour
 
     public static Spectator_Movement Instance;
 
+    private InputAction moveInput;
+    private InputAction lookInput;
+    private InputAction jumpInput;
+    private InputAction sprintInput;
+
     private void Start() {
         if(Instance == null){
             Instance = this;
@@ -17,6 +23,11 @@ public class Spectator_Movement : MonoBehaviour
         else{
             Destroy(this);
         }
+
+        moveInput = InputSystem.actions.FindAction("Move");
+        lookInput = InputSystem.actions.FindAction("Look");
+        jumpInput = InputSystem.actions.FindAction("Jump");
+        sprintInput = InputSystem.actions.FindAction("Sprint");
     }
 
     public void StartSpectating(Transform playerCameraPosition){
@@ -38,18 +49,21 @@ public class Spectator_Movement : MonoBehaviour
         // We are grounded, so recalculate move direction based on axes
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
+        Vector3 up = transform.TransformDirection(Vector3.up);
         // Press Left Shift to run
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = movementSpeed * Input.GetAxis("Vertical");
-        float curSpeedY = movementSpeed * Input.GetAxis("Horizontal");
-        Vector3 moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+        float curSpeedX = movementSpeed * moveInput.ReadValue<Vector2>().y;
+        float curSpeedY = movementSpeed * moveInput.ReadValue<Vector2>().x;
+        float curSpeedZ = movementSpeed * (jumpInput.IsPressed() ? 1 : 0);
+        Vector3 moveDirection = (forward * curSpeedX) + (right * curSpeedY) + (up * curSpeedZ);
+        moveDirection *= sprintInput.IsPressed() ? 2 : 1;
 
         // Move the controller
         transform.position += moveDirection * Time.deltaTime;
 
         // Player and Looking rotation
-        transform.RotateAround(transform.position, Vector3.up, Input.GetAxis("Mouse X") * lookSpeed);
-        transform.RotateAround(transform.position, transform.right, -Input.GetAxis("Mouse Y") * lookSpeed);
+        //TODO: prevent player from looking up or down too far
+        transform.RotateAround(transform.position, Vector3.up, lookInput.ReadValue<Vector2>().x * lookSpeed * Time.deltaTime);
+        transform.RotateAround(transform.position, transform.right, -lookInput.ReadValue<Vector2>().y * lookSpeed * Time.deltaTime);
         
 
     }
