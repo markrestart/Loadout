@@ -15,6 +15,8 @@ public class Player_Movement_Controller : NetworkBehaviour
     private Player_Manager playerManager;
     [SerializeField]
     private Animator animator;
+    [SerializeField]
+    private PlayerInput playerInput;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -34,11 +36,16 @@ public class Player_Movement_Controller : NetworkBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+
+        if(!IsOwner){
+            return;
+        }
+        playerInput.enabled = true;
+
         moveInput = InputSystem.actions.FindAction("Move");
         lookInput = InputSystem.actions.FindAction("Look");
         jumpInput = InputSystem.actions.FindAction("Jump");
         sprintInput = InputSystem.actions.FindAction("Sprint");
-
     }
 
     private void Awake() {
