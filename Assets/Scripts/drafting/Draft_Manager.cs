@@ -17,6 +17,8 @@ public class Draft_Manager : NetworkBehaviour
     [SerializeField]
     private GameObject startDraftButton;
     [SerializeField]
+    private TMPro.TextMeshProUGUI playerCount;
+    [SerializeField]
     private GameObject draftUI;
     [SerializeField]
     private TMPro.TextMeshProUGUI draftedCardsText;
@@ -66,6 +68,7 @@ public class Draft_Manager : NetworkBehaviour
     public void AddPlayerRpc(ulong clientId){
         players.Add(clientId);
         readyState.Add(clientId, false);
+        playerCount.text = $"{players.Count}/{CONSTANTS.MAX_PLAYERS}";
         //Find the reserves controller for the player
         StartCoroutine(FindReservesController(clientId));
     }
