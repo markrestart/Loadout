@@ -293,7 +293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -224
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -426,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -448
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1395,7 +1395,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 224
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3314,7 +3314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 448
       objectReference: {fileID: 0}
     - target: {fileID: 6855658880477496874, guid: d086bb5807925c8829539759de1334c0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4121,8 +4121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 131.1, y: -32.300003}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 58.74, y: -32.300003}
+  m_SizeDelta: {x: 60, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &832158545
 MonoBehaviour:
@@ -4636,8 +4636,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99375356d7e712168aab7483e95327a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UnityTransportEnabled: 0
-  FacepunchTransportEnabled: 1
   FPtransportPrefab: {fileID: 3875283884651147573, guid: c73001de0b0ef28b3a1461d234bb2a3f, type: 3}
   UtransportPrefab: {fileID: 1029232161591607536, guid: b306d2b19c75d1521b31b6a8a09ea01a, type: 3}
   panel: {fileID: 862143766}
@@ -6501,6 +6499,7 @@ MonoBehaviour:
   - {fileID: 223974228}
   - {fileID: 782628377}
   startDraftButton: {fileID: 165585583}
+  playerCount: {fileID: 832158545}
   draftUI: {fileID: 1114040580}
   draftedCardsText: {fileID: 604255886}
 --- !u!114 &1368647877
