@@ -15,8 +15,8 @@ using System.Collections.Generic;
 
 public class ConnectionUI_Manager : MonoBehaviour
 {
-	public bool UnityTransportEnabled = false;
-	public bool FacepunchTransportEnabled = true;
+	private bool UnityTransportEnabled;
+	private bool FacepunchTransportEnabled;
     public static ConnectionUI_Manager Instance { get; private set; } = null;
     private FacepunchTransport FPtransport;
 	private UnityTransport Utransport;
@@ -43,6 +43,15 @@ public class ConnectionUI_Manager : MonoBehaviour
         }else{
             Destroy(this);
         }
+
+		//Check if the game is running in editor
+		#if UNITY_EDITOR
+			UnityTransportEnabled = true;
+			FacepunchTransportEnabled = false;
+		#else
+			UnityTransportEnabled = false;
+			FacepunchTransportEnabled = true;
+		#endif
 
 		if(!UnityTransportEnabled){
 			roomCodeInput.gameObject.SetActive(false);
