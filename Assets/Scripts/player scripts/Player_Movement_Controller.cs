@@ -127,6 +127,7 @@ public class Player_Movement_Controller : NetworkBehaviour
         if(animator != null){
             animator.SetFloat("H_Speed", hSpeed);
             animator.SetBool("IsGrounded", isGrounded);
+            animator.SetFloat("V_LookAngle", Mathf.InverseLerp(lookXLimit, -lookXLimit, rotationX));
         }
     }
 }

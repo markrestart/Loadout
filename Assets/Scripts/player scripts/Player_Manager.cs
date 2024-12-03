@@ -345,7 +345,7 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     private void Start() {
         spawnPointsParent = GameObject.Find("<SpawnPoints>").transform;
         if(IsOwner){
-            playerModel.SetActive(false);
+            //playerModel.SetActive(false);
         }
     }
 
