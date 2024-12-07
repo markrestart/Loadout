@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Netcode;
-using Unity.VisualScripting;
+using UnityEngine.Events;
 
 public class Reserves_Controller : NetworkBehaviour
 {
@@ -91,6 +91,7 @@ public class Reserves_Controller : NetworkBehaviour
                     }
                 }
             }
+            OnAbility.Invoke();
         }else if(card.EType == DraftCardType.Equipment || card.EType == DraftCardType.Ammo || card.EType == DraftCardType.Armor){
             float totalCarryWeight = CONSTANTS.DEFAULT_CARRYING_CAPACITY;
             float equipWeight = card.Weight;
@@ -111,6 +112,9 @@ public class Reserves_Controller : NetworkBehaviour
                         return false;
                     }
                 }
+            }
+            if(card.EType == DraftCardType.Equipment){
+                OnEquip.Invoke();
             }
         }
 
@@ -318,4 +322,9 @@ public class Reserves_Controller : NetworkBehaviour
             ResetEquipTexts();
         }
     }
+
+    #region listeners
+        public UnityEvent OnEquip = new UnityEvent();
+        public UnityEvent OnAbility = new UnityEvent();
+    #endregion
 }

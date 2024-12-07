@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Pickup : NetworkBehaviour
 {
@@ -49,6 +50,7 @@ public class Pickup : NetworkBehaviour
             return;
         }
         if(other.gameObject.GetComponent<Player_Manager>()){
+            OnZoneEnter.Invoke();
             playersContactStartTimes.Add(other.gameObject.GetComponent<NetworkObject>().OwnerClientId, Time.time);
         }
         pickupEffect.SetActive(true);
@@ -70,6 +72,7 @@ public class Pickup : NetworkBehaviour
         if(!IsServer){
             return;
         }
+        OnPickup.Invoke();
         Rounds_Manager.Instance.AddScoreRpc(playerID, Unity.Mathematics.math.ceil(points));
         Message_System.AddMessage($"{Rounds_Manager.Instance.PlayerNames[playerID]} picked up the coin for {Unity.Mathematics.math.ceil(points)} points!");
         SetPickupTimerRpc(Random.Range(-CONSTANTS.PICKUP_RESPAWN_TIME_MAX * CONSTANTS.PICKUP_POINTS_PER_SECOND, -CONSTANTS.PICKUP_RESPAWN_TIME_MIN * CONSTANTS.PICKUP_POINTS_PER_SECOND));
@@ -82,4 +85,9 @@ public class Pickup : NetworkBehaviour
         meshRenderer.enabled = false;
         triggerCollider.enabled = false;
     }
+
+    #region listeners
+        public UnityEvent OnZoneEnter = new UnityEvent();
+        public UnityEvent OnPickup = new UnityEvent();
+    #endregion
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Draft_Manager : NetworkBehaviour
 {
@@ -19,13 +20,14 @@ public class Draft_Manager : NetworkBehaviour
     [SerializeField]
     private TMPro.TextMeshProUGUI playerCount;
     [SerializeField]
-    private GameObject draftUI;
+    public GameObject draftUI;
     [SerializeField]
     private TMPro.TextMeshProUGUI draftedCardsText;
 
     private Dictionary<ulong, List<Draft_Card>> draftState = new Dictionary<ulong, List<Draft_Card>>();
     private Dictionary<ulong, bool> readyState = new Dictionary<ulong, bool>();
     private List<ulong> players = new List<ulong>();
+    public List<ulong> Players { get => players; }
     private Dictionary<ulong,Reserves_Controller> reservesControllers = new Dictionary<ulong, Reserves_Controller>();
     // Start is called before the first frame update
     public static Draft_Manager Instance;
@@ -86,6 +88,7 @@ public class Draft_Manager : NetworkBehaviour
 
     public void BeginDraft(){
         if(IsServer){
+            OnDraftStart.Invoke();
             RequestNamesRpc();
             var draftCards = GenerateDraftCards(players.Count * (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK));
             draftCards = Shuffler.Shuffle(draftCards);
@@ -163,6 +166,7 @@ public class Draft_Manager : NetworkBehaviour
 
     [Rpc(SendTo.Server)]
     public void SelectCardRpc(ulong player, int[] cardAsArr){
+        OnDraftPick.Invoke();
         var card = IntArrayToCard(cardAsArr);
         //Add the card to the player's reserves
         reservesControllers[player].AddToReserves(card);
@@ -176,9 +180,11 @@ public class Draft_Manager : NetworkBehaviour
             if(draftState[players[0]].Count == 0){
                 EndDraftRpc(players.ToArray());
                 SetPlayerSkins();
+                OnDraftEnd.Invoke();
             }else{
                 readyState = readyState.ToDictionary(x => x.Key, x => false);
                 RotateDraft();
+                OnPackEnd.Invoke();
             }
         }
 
@@ -364,6 +370,14 @@ public class Draft_Manager : NetworkBehaviour
         }
         return draftCards;
     }
+
+#region listeners
+    public UnityEvent OnDraftPick = new UnityEvent();
+    public UnityEvent OnPackEnd = new UnityEvent();
+    public UnityEvent OnDraftEnd = new UnityEvent();
+    public UnityEvent OnDraftStart = new UnityEvent();
+#endregion
+
 }
 
 [System.Serializable]

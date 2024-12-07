@@ -17371,6 +17371,7 @@ MonoBehaviour:
   playerUIManager: {fileID: 5094391633314566208}
   weaponSound: {fileID: 943592307964287400}
   abilitySound: {fileID: 8796169402180657417}
+  ReadyButton: {fileID: 1536889954420050017}
 --- !u!114 &5493809845769760224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17480,6 +17481,12 @@ MonoBehaviour:
   abilitiesCountText: {fileID: 6270261699861876012}
   playerManager: {fileID: 4535204103476488398}
   defaultEquipment: {fileID: 11400000, guid: 0fcd5547e61771417ad407120cfda6d9, type: 2}
+  OnEquip:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAbility:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4637623880095543513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24349,7 +24356,7 @@ GameObject:
   - component: {fileID: 8094707287389549587}
   - component: {fileID: 1536889954420050017}
   m_Layer: 0
-  m_Name: Button
+  m_Name: Equip Ready Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

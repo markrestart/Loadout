@@ -5,6 +5,7 @@ using Unity.Netcode;
 using System.Linq;
 using System;
 using Unity.VisualScripting;
+using UnityEngine.Events;
 
 public class Rounds_Manager : NetworkBehaviour
 {
@@ -121,6 +122,7 @@ public class Rounds_Manager : NetworkBehaviour
     }
 
     public void StartRound(){
+        OnReady?.Invoke();
         roundStarted = true;
         currentRound++;
         playersAlive = playersAlive.ToDictionary(entry => entry.Key, entry => true);
@@ -139,4 +141,8 @@ public class Rounds_Manager : NetworkBehaviour
     public void ExitGame(){
         Application.Quit();
     }
+
+    #region listeners
+        public UnityEvent OnReady = new UnityEvent();
+    #endregion
 }

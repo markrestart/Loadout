@@ -19,11 +19,14 @@ public class ConnectionUI_Manager : MonoBehaviour
 	private bool FacepunchTransportEnabled;
     public static ConnectionUI_Manager Instance { get; private set; } = null;
     private FacepunchTransport FPtransport;
+	private UnityTransport URTransport;
 	private UnityTransport Utransport;
 	[SerializeField]
-	private GameObject FPtransportPrefab;
+	private GameObject FPTransportPrefab;
 	[SerializeField]
-	private GameObject UtransportPrefab;
+	private GameObject URTransportPrefab;
+	[SerializeField]
+	private GameObject UTransportPrefab;
 	public Lobby? CurrentLobby { get; private set; } = null;
     public List<Lobby> Lobbies { get; private set; } = new List<Lobby>(capacity: 100);
 
@@ -53,19 +56,21 @@ public class ConnectionUI_Manager : MonoBehaviour
 			FacepunchTransportEnabled = true;
 		#endif
 
+		Utransport = Instantiate(UTransportPrefab).GetComponent<UnityTransport>();
+
 		if(!UnityTransportEnabled){
 			roomCodeInput.gameObject.SetActive(false);
 			joinButtonRelay.SetActive(false);
 			hostButtonRelay.SetActive(false);
 		}else{
-			Utransport = Instantiate(UtransportPrefab).GetComponent<UnityTransport>();
-			NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+			URTransport = Instantiate(URTransportPrefab).GetComponent<UnityTransport>();
+			NetworkManager.Singleton.NetworkConfig.NetworkTransport = URTransport;
 		}
 		if(!FacepunchTransportEnabled){
 			hostButtonFP.SetActive(false);
 			joinButtonFP.SetActive(false);
 		}else{
-			FPtransport = Instantiate(FPtransportPrefab).GetComponent<FacepunchTransport>();
+			FPtransport = Instantiate(FPTransportPrefab).GetComponent<FacepunchTransport>();
 			NetworkManager.Singleton.NetworkConfig.NetworkTransport = FPtransport;
 
 			SteamMatchmaking.OnLobbyCreated += OnLobbyCreated;
@@ -279,6 +284,28 @@ public class ConnectionUI_Manager : MonoBehaviour
 
     #endregion
 
+	#region Singleplayer
+	public void StartTutorial()
+	{
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+
+		TutorialManager.Instance.isTutorial = true;
+
+		NetworkManager.Singleton.StartHost();
+	}
+
+	public void StartPlayground()
+	{
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+		
+		PlaygroundManager.Instance.isPlayground = true;
+
+		NetworkManager.Singleton.StartHost();
+	}
+
+	#endregion
 	#region Unity Relay
 	
 	[SerializeField]
@@ -315,7 +342,7 @@ public class ConnectionUI_Manager : MonoBehaviour
 
 	public async Task<string> StartHostWithRelay()
     {
-		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = URTransport;
 
 		NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 		NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
@@ -327,14 +354,14 @@ public class ConnectionUI_Manager : MonoBehaviour
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
         Unity.Services.Relay.Models.Allocation allocation = await RelayService.Instance.CreateAllocationAsync(CONSTANTS.MAX_PLAYERS);
-        Utransport.SetRelayServerData(new RelayServerData(allocation, "dtls"));
+        URTransport.SetRelayServerData(new RelayServerData(allocation, "dtls"));
         var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
         return NetworkManager.Singleton.StartHost() ? joinCode : null;
     }
 
     public async Task<bool> StartClientWithRelay()
     {
-		NetworkManager.Singleton.NetworkConfig.NetworkTransport = Utransport;
+		NetworkManager.Singleton.NetworkConfig.NetworkTransport = URTransport;
 
 		NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
 		NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnected;
@@ -347,7 +374,7 @@ public class ConnectionUI_Manager : MonoBehaviour
         }
 
         var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
-        Utransport.SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        URTransport.SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
         return !string.IsNullOrEmpty(joinCode) && NetworkManager.Singleton.StartClient();
     }
 

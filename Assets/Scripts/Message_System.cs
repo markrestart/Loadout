@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using System.Linq;
+using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class Message_System : NetworkBehaviour
 {
     public static Message_System Instance;
     private List<string> messageQueue = new List<string>();
+    private List<System.Tuple<string, bool, int>> tutorialQueue = new List<System.Tuple<string, bool, int>>();
+    private int tutorialID = 0;
     [SerializeField]
     private TMPro.TextMeshProUGUI messageText;
     [SerializeField]
@@ -23,6 +28,14 @@ public class Message_System : NetworkBehaviour
     private bool messageActive = false;
     private float startingScale;
     private float startingYPos;
+
+    private InputAction messageAction;
+    [SerializeField]
+    private GameObject tutorialUI;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI tutorialText;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI clearTutorialText;
 
     [Rpc(SendTo.Everyone)]
     public void AddMessageRpc(string message){
@@ -41,6 +54,22 @@ public class Message_System : NetworkBehaviour
         }
     }
 
+    public static int AddTutorialMessage(string message, bool clearableByPlayer){
+        if(Instance != null){
+            int id = Instance.tutorialID++;
+            Instance.tutorialQueue.Add(new System.Tuple<string, bool, int>(message, clearableByPlayer, id));
+            return id;
+        }
+        return -1;
+    }
+
+    public void ClearTutorialMessage(int id){
+        if(Instance != null){
+            OnMessageCleared.Invoke(id);
+            Instance.tutorialQueue.RemoveAll(x => x.Item3 == id);
+        }
+    }
+
     private void Start() {
         if(Instance == null){
             Instance = this;
@@ -52,6 +81,8 @@ public class Message_System : NetworkBehaviour
 
         startingScale = messageText.transform.localScale.x;
         startingYPos = messageText.transform.position.y;
+
+        messageAction = InputSystem.actions.FindAction("Jump");
     }
 
     // Update is called once per frame
@@ -79,5 +110,25 @@ public class Message_System : NetworkBehaviour
                 messageText.transform.position = new Vector3(messageText.transform.position.x, messageText.transform.position.y + messageYPosRate * Time.deltaTime, messageText.transform.position.z);
             }
         }
+    
+        if(tutorialQueue.Count > 0){
+            tutorialUI.SetActive(true);
+            if(tutorialQueue[0].Item2){
+                clearTutorialText.gameObject.SetActive(true);
+            }
+            tutorialText.text = tutorialQueue[0].Item1;
+            if(messageAction.triggered){
+                if(tutorialQueue[0].Item2){
+                    OnMessageCleared.Invoke(tutorialQueue[0].Item3);
+                    tutorialQueue.RemoveAt(0);
+                }
+            }
+        }else{
+            tutorialUI.SetActive(false);
+        }
     }
+
+    #region listeners
+        public UnityEvent<int> OnMessageCleared = new UnityEvent<int>();
+    #endregion
 }

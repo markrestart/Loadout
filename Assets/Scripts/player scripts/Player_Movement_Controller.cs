@@ -118,16 +118,16 @@ public class Player_Movement_Controller : NetworkBehaviour
         // Animation
         if(animator != null){
             Vector3 horizontalMovement = new Vector3(moveDirection.x, 0, moveDirection.z);
-            SyncAnimRpc(horizontalMovement.magnitude, characterController.isGrounded);
+            SyncAnimRpc(horizontalMovement.magnitude, characterController.isGrounded, rotationX);
         }
     }
 
     [Rpc(SendTo.Everyone)]
-    public void SyncAnimRpc(float hSpeed, bool isGrounded){
+    public void SyncAnimRpc(float hSpeed, bool isGrounded, float lookX){
         if(animator != null){
             animator.SetFloat("H_Speed", hSpeed);
             animator.SetBool("IsGrounded", isGrounded);
-            animator.SetFloat("V_LookAngle", Mathf.InverseLerp(lookXLimit, -lookXLimit, rotationX));
+            animator.SetFloat("V_LookAngle", Mathf.InverseLerp(lookXLimit, -lookXLimit, lookX));
         }
     }
 }

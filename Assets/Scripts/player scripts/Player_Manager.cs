@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player_Manager : NetworkBehaviour, ITakes_Damage
 {
@@ -45,6 +46,8 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
 
     public AudioSource WeaponSound { get => weaponSound; }
     public AudioSource AbilitySound { get => abilitySound; }
+    [SerializeField]
+    private Button ReadyButton;
 
     public void ClearLoadout(){
         archetype = null;
@@ -345,7 +348,14 @@ public class Player_Manager : NetworkBehaviour, ITakes_Damage
     private void Start() {
         spawnPointsParent = GameObject.Find("<SpawnPoints>").transform;
         if(IsOwner){
-            //playerModel.SetActive(false);
+            GameObject.Find("Manager").transform.parent = transform;
+        
+            if(PlaygroundManager.Instance.isPlayground){
+                PlaygroundManager.Instance.SetupPlayground();
+            }else if(TutorialManager.Instance.isTutorial){
+                TutorialManager.Instance.equipReadyButton = ReadyButton;
+                TutorialManager.Instance.SetupTutorial();
+            }
         }
     }
 
