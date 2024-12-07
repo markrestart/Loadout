@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2308ed5bcdc23bcf4b4ab58382684650, type: 3}
   m_Name: Ninja
   m_EditorClassIdentifier: 
-  archetypeName: Ninja
+  archetypeName: Pugilist
   description: One who carries no weapons. You must rely only on your fists and abilities.
     Does 4X melee damage and can move around the arena with ease.
   walkingSpeedModifier: 2

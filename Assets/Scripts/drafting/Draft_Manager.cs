@@ -92,16 +92,23 @@ public class Draft_Manager : NetworkBehaviour
             RequestNamesRpc();
             var draftCards = GenerateDraftCards(players.Count * (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK));
             draftCards = Shuffler.Shuffle(draftCards);
+            //Sort Archetypes to the front of each player's first pack(every packs_per_draft * cards_per_pack starting at 0)
+            int indexNeedingArchetype = 0;
+            for(int i = 0; i < draftCards.Count; i++){
+                if(draftCards[i].EType == DraftCardType.Archetype && i != indexNeedingArchetype){
+                    var temp = draftCards[i];
+                    draftCards[i] = draftCards[indexNeedingArchetype];
+                    draftCards[indexNeedingArchetype] = temp;
+
+                    indexNeedingArchetype += CONSTANTS.CARDS_PER_PACK * CONSTANTS.PACKS_PER_DRAFT;
+                    if(indexNeedingArchetype >= draftCards.Count){
+                        break;
+                    }
+                }
+            }
+
             for(int i = 0; i < players.Count; i++){
                 draftState.Add(players[i], new List<Draft_Card>(draftCards.GetRange(i * (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK), (CONSTANTS.PACKS_PER_DRAFT * CONSTANTS.CARDS_PER_PACK))));
-            }
-            //TODO: Revisit this. Currently, any archetypes are moved to the front of the draftState list for each player
-            foreach(var player in draftState){
-                var archetypes = player.Value.Where(x => x.EType == DraftCardType.Archetype).ToList();
-                foreach(var archetype in archetypes){
-                    player.Value.Remove(archetype);
-                    player.Value.Insert(0, archetype);
-                }
             }
             //Remove the start draft button
             startDraftButton.gameObject.SetActive(false);
@@ -360,7 +367,7 @@ public class Draft_Manager : NetworkBehaviour
                         break;
                 }
                 draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammo.ammoType, amount)));
-            }else if(percent <= 0.9f){
+            }else if(percent <= 0.93f){
                 //Ability
                 draftCards.Add(new Draft_Card(new Data_Ability(AbilityPool[UnityEngine.Random.Range(0, AbilityPool.Count)])));
             }else{
