@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using System.Threading.Tasks;
 
 public class PlaygroundManager : NetworkBehaviour
 {
@@ -22,7 +23,8 @@ public class PlaygroundManager : NetworkBehaviour
         
     }
 
-    public void SetupPlayground(){
+    public async void SetupPlayground(){
+        await Task.Delay(100);
         Message_System.AddMessage("Setting up playground...");
 
         // Skip drafting phase

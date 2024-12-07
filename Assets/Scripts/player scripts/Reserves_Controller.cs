@@ -226,9 +226,13 @@ public class Reserves_Controller : NetworkBehaviour
     public void ResetRound(bool isSurvivor){
         playerManager.Unready();
         if(playerManager.Archetype != null){
+            if(playerManager.Archetype.archetypeSpecials.Contains(ArchetypeSpecials.ReturnAbilitiies)){
+                foreach(var ability in playerManager.Abilities){
+                    AddToReserves(new Draft_Card(ability));
+                }
+            }
             AddToReserves(new Draft_Card(playerManager.Archetype));
         }
-        //TODO: revisit this. Currently, only the survivor LOSES their equipment
         if(!isSurvivor){
             foreach(var equipment in playerManager.Equipments){
                 if(equipment.equipmentName != defaultEquipment.equipmentName){

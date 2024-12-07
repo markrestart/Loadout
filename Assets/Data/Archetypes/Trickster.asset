@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Trickster
   m_EditorClassIdentifier: 
   archetypeName: Trickster
-  description: DO NOT SELECT. Needs a huge rework. This shouldn't show up in the
-    draft.
+  description: Quickly use abilities. Abilities are returned at the end of the round.
   walkingSpeedModifier: 1
   runningSpeedModifier: 1
   jumpSpeedModifier: 1
@@ -22,5 +21,6 @@ MonoBehaviour:
   meleeModifier: 1
   health: 100
   carryWeight: 100
-  abilitySlots: 3
+  abilitySlots: 4
   abilityCooldownModifier: 0.7
+  archetypeSpecials: 00000000

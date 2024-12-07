@@ -88,7 +88,6 @@ public class Action_Handler : NetworkBehaviour
         if(abilityInput.triggered){
             if(activeAbility != null)
             {
-                //TODO: Some abilities may not need to be sent as an rpc(Like movement abilities)
                 ActivateAbilityRpc();
             }
         }

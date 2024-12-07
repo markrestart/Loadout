@@ -24,7 +24,7 @@ public class TutorialManager : MonoBehaviour
     }
 
     public async void SetupTutorial(){
-        await Task.Delay(150);
+        await Task.Delay(100);
         var playerManager = GameObject.FindAnyObjectByType<Player_Manager>();
         var reservesController = GameObject.FindAnyObjectByType<Reserves_Controller>();
         equipReadyButton.interactable = false;

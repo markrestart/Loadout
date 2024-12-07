@@ -14,4 +14,9 @@ public class SO_Archetype : ScriptableObject {
     public float carryWeight = 10.0f;
     public int abilitySlots = 1;
     public float abilityCooldownModifier = 1;
+    public ArchetypeSpecials[] archetypeSpecials;
+}
+
+public enum ArchetypeSpecials {
+    ReturnAbilitiies
 }

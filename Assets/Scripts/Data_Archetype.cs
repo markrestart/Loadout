@@ -14,6 +14,7 @@ public class Data_Archetype
     public float carryWeight;
     public int abilitySlots;
     public float abilityCooldownModifier;
+    public ArchetypeSpecials[] archetypeSpecials;
 
     public Data_Archetype(SO_Archetype scriptableArchetype){
         this.archetypeName = scriptableArchetype.archetypeName;
@@ -27,5 +28,6 @@ public class Data_Archetype
         this.carryWeight = scriptableArchetype.carryWeight;
         this.abilitySlots = scriptableArchetype.abilitySlots;
         this.abilityCooldownModifier = scriptableArchetype.abilityCooldownModifier;
+        this.archetypeSpecials = scriptableArchetype.archetypeSpecials;
     }
 }

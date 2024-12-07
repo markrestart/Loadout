@@ -38,7 +38,6 @@ public class Data_Ability
         cooldownMultiplier = multiplier;
     }
 
-//TODO: Make sure abilities are replicated
     public void Activate(Player_Manager playerManager){
         if(Time.time - lastActivationTime < Cooldown){
             return;

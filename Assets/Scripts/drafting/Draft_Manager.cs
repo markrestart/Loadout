@@ -339,7 +339,6 @@ public class Draft_Manager : NetworkBehaviour
                 //Armor
                 draftCards.Add(new Draft_Card(ArmorPool[UnityEngine.Random.Range(0, ArmorPool.Count)]));
             }else if(percent <= 0.7f){
-                //Ammo TODO: Hardcoded ammo amounts should be replaced with a more dynamic system
                 var amount = 0;
                 List<DraftableAmmo> RestrictedAmmoPool = new List<DraftableAmmo>(AmmoPool);
                 foreach(DraftableAmmo a in AmmoPool){
