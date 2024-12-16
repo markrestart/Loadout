@@ -66,13 +66,21 @@ public class Draft_Manager : NetworkBehaviour
         }
     }
 
-    [Rpc(SendTo.Everyone)]
+    [Rpc(SendTo.Server)]
     public void AddPlayerRpc(ulong clientId){
         players.Add(clientId);
         readyState.Add(clientId, false);
         playerCount.text = $"{players.Count}/{CONSTANTS.MAX_PLAYERS}";
         //Find the reserves controller for the player
         StartCoroutine(FindReservesController(clientId));
+
+        SyncPlayersRpc(players.ToArray());
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void SyncPlayersRpc(ulong[] playersList){
+        players = playersList.ToList();
+        playerCount.text = $"{players.Count}/{CONSTANTS.MAX_PLAYERS}";
     }
 
     private IEnumerator FindReservesController(ulong clientId){
@@ -348,23 +356,7 @@ public class Draft_Manager : NetworkBehaviour
                     }
                 }
                 var ammo= RestrictedAmmoPool[UnityEngine.Random.Range(0, RestrictedAmmoPool.Count)];
-                switch(ammo.ammoType){
-                    case AmmoType.Bullet:
-                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
-                        break;
-                    case AmmoType.Shell:
-                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
-                        break;
-                    case AmmoType.Rocket:
-                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
-                        break;
-                    case AmmoType.Energy:
-                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
-                        break;
-                    case AmmoType.Arrow:
-                        amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
-                        break;
-                }
+                amount = UnityEngine.Random.Range(ammo.minAmount, ammo.maxAmount);
                 draftCards.Add(new Draft_Card(new System.Tuple<AmmoType, int>(ammo.ammoType, amount)));
             }else if(percent <= 0.93f){
                 //Ability
