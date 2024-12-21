@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Projectile : MonoBehaviour
+public class Projectile : NetworkBehaviour
 {
     private float damage;
     private ulong sourceID;
@@ -38,6 +39,9 @@ public class Projectile : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision other) {
+        if(!IsOwner){
+            return;
+        }
         if(!destroyOnHit){
             return;
         }
@@ -48,6 +52,9 @@ public class Projectile : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
+        if(!IsOwner){
+            return;
+        }
         if(!destroyOnTrigger || isSet == false){
             return;
         }
@@ -57,6 +64,9 @@ public class Projectile : MonoBehaviour
     }
 
     private void Update() {
+        if(!IsOwner){
+            return;
+        }
         if(destroyOnTime){
             timeToLive -= Time.deltaTime;
             if(timeToLive <= 0){
@@ -72,7 +82,8 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void OnDestroy() {
+    public override void OnDestroy() {
+        base.OnDestroy();
         if(explosionPrefab){
             //Get a quaternition the matches the up axis to the normal of the first contact point
             Quaternion rotation = Quaternion.LookRotation(Vector3.up, Vector3.up);
