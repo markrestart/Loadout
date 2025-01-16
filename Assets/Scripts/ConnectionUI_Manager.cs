@@ -82,6 +82,11 @@ public class ConnectionUI_Manager : MonoBehaviour
 		}
         panel.SetActive(true);
     }
+
+	public void ExitGame(){
+		Application.Quit();
+	}
+	
     // Host a game using Unity Netcode for GameObjects
     public void HostGame()
     {

@@ -15,6 +15,8 @@ public class Pickup : NetworkBehaviour
     private Collider triggerCollider;
     [SerializeField]
     private GameObject pickupEffect;
+    [SerializeField]
+    private GameObject pickupFinishEffectPrefab;
 
     // Update is called once per frame
     void Update()
@@ -73,6 +75,9 @@ public class Pickup : NetworkBehaviour
             return;
         }
         OnPickup.Invoke();
+        var finish = Instantiate(pickupFinishEffectPrefab, transform.position, Quaternion.identity);
+        finish.GetComponent<MoveToPlayer>().SetPlayer(GameObject.FindGameObjectsWithTag("Player").First(player => player.GetComponent<NetworkObject>().OwnerClientId == playerID).transform);
+        finish.GetComponent<NetworkObject>().Spawn();
         Rounds_Manager.Instance.AddScoreRpc(playerID, Unity.Mathematics.math.ceil(points));
         Message_System.AddMessage($"{Rounds_Manager.Instance.PlayerNames[playerID]} picked up the coin for {Unity.Mathematics.math.ceil(points)} points!");
         SetPickupTimerRpc(Random.Range(-CONSTANTS.PICKUP_RESPAWN_TIME_MAX * CONSTANTS.PICKUP_POINTS_PER_SECOND, -CONSTANTS.PICKUP_RESPAWN_TIME_MIN * CONSTANTS.PICKUP_POINTS_PER_SECOND));
